@@ -89,15 +89,16 @@
     <!-- 2. ส่วนหลักของแอป -->
     <div id="app-section" style="display: none;">
         
-        <!-- 📢 BOX BANNER โฆษณา -->
-        <div class="banner-box">
-            <span class="banner-badge">Sponsor / Ad</span>
-            <div id="bannerPlaceholder" class="banner-placeholder">
-                📌 พื้นที่สำหรับแทรกรูปภาพ Banner โฆษณา<br>
-                <span style="font-size: 0.8rem; color: #94a3b8;">(คุณสามารถแทรกรูปภาพในเครื่องหรืออัปโหลดเปลี่ยนรูปได้จากปุ่มด้านล่าง)</span>
-            </div>
-            <img id="bannerImg" src="" alt="Banner Ad" style="display: none;">
-        </div>
+<!-- 📢 BOX BANNER โฆษณา -->
+<div class="banner-box">
+    <span class="banner-badge">Sponsor / Ad</span>
+    
+    <!-- ซ่อน Text Placeholder -->
+    <div id="bannerPlaceholder" class="banner-placeholder" style="display: none;"></div>
+    
+    <!-- ใส่ URL รูปภาพ Banner หรือรหัส Base64 ตรงนี้ -->
+    <img id="bannerImg" src="โฆษณา.jpg" alt="Banner Ad" style="display: block;">
+</div>
 
         <!-- เครื่องมือเปลี่ยนรูป Banner (ใช้ทดสอบแทรกรูป) -->
         <div class="card" style="padding: 14px 20px; background: #f8fafc; border: 1px dashed #cbd5e1;">
@@ -192,7 +193,7 @@ function previewImage(event) {
         reader.onload = function(e) {
             uploadedBase64Image = e.target.result;
             const imgElement = document.getElementById('imgPreview');
-            imgElement.src = "โฆษณา.jpg";
+            imgElement.src = uploadedBase64Image;
             imgElement.style.display = 'block';
             document.getElementById('previewText').style.display = 'none';
         }
