@@ -1,16 +1,29 @@
 const express = require('express');
-const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
-// เพิ่ม Limit ขนาด Payload รองรับไฟล์ภาพ Base64
-app.use(express.json({ limit: '10mb' }));
-app.use(express.static(__dirname));
+// เปิดให้เข้าถึงไฟล์ฝั่ง Client (เช่น index.html)
+app.use(express.static(__dirname + '/public'));
 
-// อนุญาตให้เข้าถึงรูปภาพในโฟลเดอร์ picture โดยตรง
-app.use('/picture', express.static(path.join(__dirname, 'picture')));
+io.on('connection', (socket) => {
+    console.log('ผู้ใช้งานเชื่อมต่อแล้ว:', socket.id);
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    // รับข้อความจาก Client คนหนึ่ง แล้วส่งต่อให้ทุกคน (รวมถึงอีกฝ่าย)
+    socket.on('chat message', (data) => {
+        io.emit('chat message', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('ผู้ใช้งานตัดการเชื่อมต่อ:', socket.id);
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Server ทำงานที่ http://localhost:3000');
 });
 // ==========================================
 // MOCK DATA พร้อมรูปภาพและสถานะ SOLD OUT
