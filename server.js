@@ -7,12 +7,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// เปิดให้เข้าถึงไฟล์ฝั่ง Client (เช่น index.html)
-app.use(express.static(__dirname + '/public'));
+// อ่าน JSON จากคำขอของ Client (รองรับรูปภาพ Base64 ขนาดใหญ่)
+app.use(express.json({ limit: '20mb' }));
+
+// เปิดให้เข้าถึงไฟล์ฝั่ง Client ที่อยู่โฟลเดอร์เดียวกับ server.js
+app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); 
-    // หรือ res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 io.on('connection', (socket) => {
@@ -28,9 +30,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
-    console.log('Server ทำงานที่ http://localhost:3000');
-});
 // ==========================================
 // MOCK DATA พร้อมรูปภาพและสถานะ SOLD OUT
 // ==========================================
@@ -137,16 +136,10 @@ app.post('/api/login', (req, res) => {
     return res.status(403).json({ error: 'อนุญาตเฉพาะอีเมล มศว เท่านั้น (@g.swu.ac.th)' });
 });
 
-app.listen(3000, () => console.log('Mockup Server with Sold Out status running on http://localhost:3000'));
 
-// ... โค้ดด้านบนเหมือนเดิม ...
-
-app.post('/api/login', (req, res) => {
-    // ...
+// เริ่ม HTTP server เพียงครั้งเดียว (รองรับทั้ง Express และ Socket.IO)
+server.listen(3000, () => {
+    console.log('Server ทำงานที่ http://localhost:3000');
 });
 
-// บรรทัด app.listen เดิมปล่อยไว้ได้ครับ
-app.listen(3000, () => console.log('Mockup Server with Sold Out status running on http://localhost:3000'));
-
-// === เพิ่มบรรทัดนี้ล่างสุดของไฟล์ server.js ===
 module.exports = app;
