@@ -190,20 +190,31 @@ let currentUser = null;
 let allProducts = [];
 let currentSelectedProduct = null;
 
-// ฟังก์ชันแทรกรูปภาพ Banner จากเครื่อง
-function changeBannerFromFile(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const bannerImg = document.getElementById('bannerImg');
-            bannerImg.src = e.target.result;
-            bannerImg.style.display = 'block';
-            document.getElementById('bannerPlaceholder').style.display = 'none';
-        }
-        reader.readAsDataURL(file);
-    }
+// ตัวอย่างการ Fetch ฝั่ง Frontend
+async function loadProducts() {
+  try {
+    const response = await fetch('/api/products');
+    const data = await response.json(); // ต้องมี await response.json()
+    
+    // ตรวจสอบโครงสร้างข้อมูลที่รับมา
+    console.log('Fetched data:', data); 
+
+    const container = document.getElementById('product-container');
+    container.innerHTML = ''; // เคลียร์พื้นที่ก่อน Render
+
+    data.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `<h3>${item.name}</h3><p>${item.price} THB</p>`;
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Error loading products:', error);
+  }
 }
+
+// เรียกใช้ฟังก์ชันเมื่อ DOM โหลดเสร็จ
+document.addEventListener('DOMContentLoaded', loadProducts);
 
 function previewImage(event) {
     const file = event.target.files[0];
