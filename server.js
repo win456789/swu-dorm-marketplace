@@ -9,6 +9,9 @@ app.use(express.static(__dirname));
 // อนุญาตให้เข้าถึงรูปภาพในโฟลเดอร์ picture โดยตรง
 app.use('/picture', express.static(path.join(__dirname, 'picture')));
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 // ==========================================
 // MOCK DATA พร้อมรูปภาพและสถานะ SOLD OUT
 // ==========================================
