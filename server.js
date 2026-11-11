@@ -26,7 +26,7 @@ let mockProducts = [
         contact_phone: "081-234-5678",
         description: "กระจกยาวเต็มตัว ขนาด 180 cm x 70 cm สภาพดีมาก เหมาะสำหรับแต่งตัวหรือใช้ในห้องนอน",
         seller_name: "Thanyaluk kanthadong (ปี 1)",
-        seller_avatar: "https://scontent.fbkk29-4.fna.fbcdn.net/v/t39.30808-1/348423820_637435481582972_1664154637165572559_n.jpg?stp=cp6_dst-jpg_tt6&cstp=mx2047x2048&ctp=s480x480&_nc_cat=107&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e99d92&_nc_ohc=YsO4VAL8P-AQ7kNvwEnd-EN&_nc_oc=Adqm4Wzoj3zh2J0PqzWgGjCLENlx_QHjGIv7GfhiHoB1Eb2BjN5UvedG6Kzpc1LZ8WWXI51B0DNXFd4iJ__LZ1u8&_nc_zt=24&_nc_ht=scontent.fbkk29-4.fna&_nc_gid=UIqpUAN163MWyVEL6FPS6g&_nc_ss=782a8&oh=00_AQQK8l8RByA_Ut0pKGx9KnwYrYM9ZmDaHwljica2k1QoaA&oe=6AF0DCF3",
+        seller_avatar: "https://scontent.fbkk29-4.fna.fbcdn.net/v/t39.30808-1/348423820_637435481582972_1664154637165572559_n.jpg?stp=cp6_dst-jpg_tt6&cstp=mx2047x2048&ctp=s480x480&_nc_cat=107&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e99d92&_nc_ohc=cwlAH4e_M_EQ7kNvwFTX7dR&_nc_oc=AdpnGXSo0HSTuAFVVEoI5yovyqSQ4q9ShP2CloCu9UjHImgg7EP_uEGdw5tT7QzoZfRUc3O1sn1qkSWYsbHq6D3V&_nc_zt=24&_nc_ht=scontent.fbkk29-4.fna&_nc_gid=J2pvh0Q4c8iKo3ieHBFiZQ&_nc_ss=782a8&oh=00_AQQEOyWsJzujwJksCweaOwbDt8x1t0I_NXTt-4vO06t_Lg&oe=6AFA1773",
         image_url: "/picture/S__31670329_0.jpg",
         is_sold: false
     },
