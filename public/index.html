@@ -383,6 +383,18 @@ async function addProduct() {
         }
     }
 </script>
+<!-- 1. ต้องนำเข้าสคริปต์ Socket.io ฝั่ง Client -->
+<script src="/socket.io/socket.io.js"></script>
 
+<script>
+  // 2. เริ่มต้นการเชื่อมต่อกับ Server
+  const socket = io();
+
+  // 3. ดักรับข้อความที่ส่งมาจาก Server
+  socket.on('chat message', (data) => {
+      console.log('ได้รับข้อความใหม่:', data);
+      // เขียนโค้ดเพิ่มข้อความลงใน UI แชทตรงนี้
+  });
+</script>
 </body>
 </html>
