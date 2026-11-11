@@ -21,6 +21,12 @@
         button:hover { background: #aa0000; }
         button:disabled { background: #cbd5e1; cursor: not-allowed; }
         
+        /* Banner โฆษณา (Ad Box) */
+        .banner-box { position: relative; width: 100%; height: 200px; background: #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .banner-box img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-badge { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px); }
+        .banner-placeholder { text-align: center; color: #64748b; font-weight: 500; }
+        
         /* Product Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .item-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: 0.2s; border: 1px solid #f0f0f0; cursor: pointer; position: relative; }
@@ -29,7 +35,6 @@
         .img-container { position: relative; width: 100%; height: 180px; }
         .item-card img.product-img { width: 100%; height: 100%; object-fit: cover; background: #eee; }
         
-        /* Sold Out Badge บน Card */
         .sold-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold; letter-spacing: 1px; backdrop-filter: blur(2px); }
         .is-sold-card { opacity: 0.75; filter: grayscale(40%); }
         
@@ -38,16 +43,14 @@
         .price { color: #cc0000; font-size: 1.3rem; font-weight: bold; margin-bottom: 8px; }
         .badge { background: #eef2ff; color: #4f46e5; font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; display: inline-block; font-weight: 500; }
         
-        /* Seller Info in Card */
         .seller-info { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #eee; }
         .seller-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
         .seller-text { font-size: 0.8rem; color: #666; }
 
-        /* Preview Box */
         .preview-box { width: 100%; height: 150px; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 8px 0; overflow: hidden; background: #fafafa; }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
-        /* Modal Overlay & Card (หน้าต่างสั่งซื้อ) */
+        /* Modal Overlay & Card */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; box-sizing: border-box; }
         .modal-content { background: white; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .close-btn { position: absolute; top: 16px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #aaa; font-weight: bold; }
@@ -69,7 +72,7 @@
             <img id="myAvatar" class="user-avatar" src="" alt="Avatar">
             <div>
                 <div id="myName" class="user-name"></div>
-                <div style="font-size: 0.75rem; color: #22c55e;">● Thanyalak Kanthadong (ปี 1)</div>
+                <div style="font-size: 0.75rem; color: #22c55e;">● Thanyalak Kanthadong (ผู้ซื้อ)</div>
             </div>
         </div>
     </div>
@@ -85,6 +88,22 @@
 
     <!-- 2. ส่วนหลักของแอป -->
     <div id="app-section" style="display: none;">
+        
+        <!-- 📢 BOX BANNER โฆษณา -->
+        <div class="banner-box">
+            <span class="banner-badge">Sponsor / Ad</span>
+            <div id="bannerPlaceholder" class="banner-placeholder">
+                📌 พื้นที่สำหรับแทรกรูปภาพ Banner โฆษณา<br>
+                <span style="font-size: 0.8rem; color: #94a3b8;">(คุณสามารถแทรกรูปภาพในเครื่องหรืออัปโหลดเปลี่ยนรูปได้จากปุ่มด้านล่าง)</span>
+            </div>
+            <img id="bannerImg" src="" alt="Banner Ad" style="display: none;">
+        </div>
+
+        <!-- เครื่องมือเปลี่ยนรูป Banner (ใช้ทดสอบแทรกรูป) -->
+        <div class="card" style="padding: 14px 20px; background: #f8fafc; border: 1px dashed #cbd5e1;">
+            <label style="font-weight: bold; font-size: 0.85rem; color: #475569;">🖼️ แทรก/อัปโหลดรูป Banner โฆษณา:</label>
+            <input type="file" id="bannerFileInput" accept="image/*" onchange="changeBannerFromFile(event)">
+        </div>
         
         <!-- ฟอร์มลงขายของ -->
         <div class="card">
@@ -112,7 +131,7 @@
     </div>
 </div>
 
-<!-- 3. หน้าต่างสั่งซื้อ / ติดต่อผู้ขาย (Modal Popup) -->
+<!-- 3. หน้าต่างสั่งซื้อ (Modal Popup) -->
 <div id="orderModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close-btn" onclick="closeModalDirect()">&times;</span>
@@ -150,6 +169,21 @@ let uploadedBase64Image = "";
 let currentUser = null;
 let allProducts = [];
 let currentSelectedProduct = null;
+
+// ฟังก์ชันแทรกรูปภาพ Banner จากเครื่อง
+function changeBannerFromFile(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const bannerImg = document.getElementById('bannerImg');
+            bannerImg.src = e.target.result;
+            bannerImg.style.display = 'block';
+            document.getElementById('bannerPlaceholder').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+}
 
 function previewImage(event) {
     const file = event.target.files[0];
@@ -234,7 +268,6 @@ function openOrderModal(index) {
     const btnCall = document.getElementById('btnCall');
     const modalSoldOverlay = document.getElementById('modalSoldOverlay');
 
-    // ตรวจสอบสถานะการขายออกแล้ว
     if (currentSelectedProduct.is_sold) {
         modalSoldOverlay.style.display = 'flex';
         btnLine.disabled = true;
@@ -312,7 +345,8 @@ async function addProduct() {
         document.getElementById('imageInput').value = '';
         document.getElementById('imgPreview').style.display = 'none';
         document.getElementById('previewText').style.display = 'block';
-        uploadedBase64Image = "";      
+        uploadedBase64Image = "";
+        
         loadProducts();
     }
 }
