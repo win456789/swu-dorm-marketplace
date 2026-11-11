@@ -119,3 +119,15 @@ app.post('/api/login', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Mockup Server with Sold Out status running on http://localhost:3000'));
+
+// ... โค้ดด้านบนเหมือนเดิม ...
+
+app.post('/api/login', (req, res) => {
+    // ...
+});
+
+// บรรทัด app.listen เดิมปล่อยไว้ได้ครับ
+app.listen(3000, () => console.log('Mockup Server with Sold Out status running on http://localhost:3000'));
+
+// === เพิ่มบรรทัดนี้ล่างสุดของไฟล์ server.js ===
+module.exports = app;
