@@ -22,27 +22,39 @@
         button:disabled { background: #cbd5e1; cursor: not-allowed; }
         
             .banner-box {
-        position: relative;
-        width: 100%;
-        min-height: 120px; /* กำหนดความสูงขั้นต่ำไว้กรณีรูปยังไม่โหลด */
-        height: auto;      /* ให้ความสูงปรับตามขนาดรูปจริง */
-        background: #e2e8f0;
-        border-radius: 16px;
-        overflow: hidden;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px dashed #cbd5e1;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                }
+    position: relative;
+    width: 100%;
+    height: auto;             /* ให้ความสูงยืดตามรูปภาพจริง ไม่โดนตัดขอบ */
+    background: #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: none;             /* เอาเส้นประออกเมื่อมีรูปภาพ */
+    font-size: 0;             /* ป้องกันระยะขอบเกินล่างภาพ */
+}
 
-            .banner-box img {
-        width: 100%;
-        height: auto;         /* ให้รูปคำนวณความสูงตามสัดส่วนจริง */
-        display: block;
-        object-fit: contain;  /* แสดงรูปเต็มรูปโดยไม่ถูกตัดขอบ (Crop) */
-                }
+.banner-box img {
+    width: 100%;
+    height: auto;             /* รักษาสัดส่วนรูปเดิม 100% */
+    display: block;
+    object-fit: cover;
+}
+
+/* ป้ายแสดงสถานะโฆษณาให้อยู่มุมขวาบนภาพเสมอ */
+.banner-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    z-index: 2;               /* ลอยอยู่เหนือตัวรูปภาพเสมอ */
+}
         /* Product Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .item-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: 0.2s; border: 1px solid #f0f0f0; cursor: pointer; position: relative; }
