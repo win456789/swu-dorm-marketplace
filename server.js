@@ -40,8 +40,8 @@ let mockProducts = [
         contact_phone: "089-000-1122",
         description: "Microwave SAMSUNG 20 ลิตร สภาพดี ใช้งานได้ปกติ มีรอยขีดข่วนเล็กน้อย แต่ไม่กระทบต่อการใช้งาน",
         seller_name: "Pitchayapa yimsuan (ปี 2)",
-        seller_avatar: "/picture/S__31678469.jpg",
-        image_url: "/picture/S__31678469_0.jpg",
+        seller_avatar: "picture/S__31678469.jpg",
+        image_url: "/picture/S__31670331_0.jpg",
         is_sold: false
     },
     {
