@@ -1,13 +1,18 @@
 const express = require('express');
+const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 // เปิดให้เข้าถึงไฟล์ฝั่ง Client (เช่น index.html)
 app.use(express.static(__dirname + '/public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); 
+    // หรือ res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 io.on('connection', (socket) => {
     console.log('ผู้ใช้งานเชื่อมต่อแล้ว:', socket.id);

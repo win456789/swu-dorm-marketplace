@@ -371,6 +371,18 @@ async function addProduct() {
         loadProducts();
     }
 }
+    function login() {
+        const email = document.getElementById('emailInput').value.trim();
+        const msg = document.getElementById('login-msg');
+
+        if (email.endsWith('@g.swu.ac.th') || email !== '') {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('app-section').style.display = 'block';
+            document.getElementById('user-profile-bar').style.display = 'flex';
+        } else {
+            msg.innerText = 'กรุณากรอกอีเมลมหาวิทยาลัยที่ถูกต้อง (@g.swu.ac.th)';
+        }
+    }
 </script>
 
 </body>
