@@ -123,6 +123,17 @@ app.post('/api/chats/start', (req, res) => {
             ]
         };
     }
+    // API ลบสินค้าตาม ID
+app.delete('/api/products/:id', (req, res) => {
+    const productId = Number(req.params.id);
+    const index = mockProducts.findIndex(p => Number(p.id) === productId);
+
+    if (index !== -1) {
+        mockProducts.splice(index, 1);
+    }
+
+    res.json({ success: true, message: 'ลบสินค้าสำเร็จ' });
+});
 
     res.json({ thread: mockChats[threadId] });
 });

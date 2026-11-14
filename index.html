@@ -451,6 +451,7 @@ let uploadedQrBase64 = "";
 let currentUser = null;
 let allProducts = [];
 let currentSelectedProduct = null;
+let deletedProductIds = JSON.parse(localStorage.getItem('swu_deleted_products') || '[]');
 let activeThreadId = null;
 
 let selectedPayKey = "qr_promptpay";
@@ -705,8 +706,12 @@ function renderFilteredProducts() {
         const originalIndex = allProducts.findIndex(p => p.id === item.id);
         return `
             <div class="item-card ${item.is_sold ? 'is-sold-card' : ''}" onclick="openOrderModal(${originalIndex})">
+                <button onclick="event.stopPropagation(); deleteProduct(${item.id})" title="ลบสินค้า"
+                style="position: absolute; top: 8px; right: 8px; z-index: 10; width: 32px; height: 32px; padding: 0; margin: 0; border-radius: 50%; background: rgba(239, 68, 68, 0.9); color: white; font-size: 0.9rem;">
+                🗑️
+                </button>
                 <div class="img-container">
-                    <img class="product-img" src="${item.image_url}" alt="${item.title}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80';">
+                    <img class="product-img" src="${item.image_url}" alt="${item.title}">
                     ${item.is_sold ? '<div class="sold-overlay">SOLD OUT</div>' : ''}
                 </div>
                 <div class="item-info">
@@ -1126,6 +1131,72 @@ async function addProduct() {
     } catch (error) {
         alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์: ' + error.message);
     }
+}
+async function loadProducts() {
+    const res = await fetch('/api/products');
+    const products = await res.json();
+
+    // กรองสินค้าที่เคยกดลบไปแล้วออกไปไม่ให้แสดงผลอีก
+    allProducts = products.filter(item => !deletedProductIds.includes(Number(item.id)));
+
+    const listDiv = document.getElementById('product-list');
+    if (allProducts.length === 0) {
+        listDiv.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">ไม่มีรายการสินค้าในขณะนี้</div>`;
+        return;
+    }
+
+    listDiv.innerHTML = allProducts.map((item, index) => `
+        <div class="item-card ${item.is_sold ? 'is-sold-card' : ''}" onclick="openOrderModal(${index})">
+            <button onclick="event.stopPropagation(); deleteProduct(${item.id})" title="ลบสินค้า"
+                style="position: absolute; top: 8px; right: 8px; z-index: 10; width: 32px; height: 32px; padding: 0; margin: 0; border-radius: 50%; background: rgba(239, 68, 68, 0.92); color: white; border: none; cursor: pointer; font-size: 0.9rem;">
+                🗑️
+            </button>
+            <div class="img-container">
+                <img class="product-img" src="${item.image_url}" alt="${item.title}">
+                ${item.is_sold ? '<div class="sold-overlay">SOLD OUT</div>' : ''}
+            </div>
+            <div class="item-info">
+                <div class="item-title">${item.title}</div>
+                <div class="price">฿${Number(item.price).toLocaleString()}</div>
+                <span class="badge">📍 ${item.dorm_location}</span>
+                <div class="seller-info">
+                    <img class="seller-avatar" src="${item.seller_avatar}" alt="">
+                    <span class="seller-text">${item.seller_name}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function deleteProduct(productId) {
+    if (!confirm('ต้องการลบสินค้าชิ้นนี้ใช่หรือไม่?')) return;
+
+    const targetId = Number(productId);
+
+    // 1. บันทึกลง localStorage ทันที (ป้องกันสินค้าเด้งกลับตอนรีเฟรชบน Vercel)
+    if (!deletedProductIds.includes(targetId)) {
+        deletedProductIds.push(targetId);
+        localStorage.setItem('swu_deleted_products', JSON.stringify(deletedProductIds));
+    }
+
+    // 2. ส่งคำสั่งลบไปที่ Backend (server.js)
+    fetch(`/api/products/${targetId}`, { method: 'DELETE' }).catch(() => {});
+
+    // 3. ลบห้องแชทที่ผูกกับสินค้านี้ในเครื่องด้วย (ถ้ามี)
+    if (typeof localChats !== 'undefined' && localChats[`chat_prod_${targetId}`]) {
+        delete localChats[`chat_prod_${targetId}`];
+        if (typeof saveLocalChats === 'function') saveLocalChats();
+    }
+
+    if (typeof closeModalDirect === 'function') closeModalDirect();
+    loadProducts();
+}
+
+// ฟังก์ชันเสริม: เรียกใช้หากต้องการกู้คืนสินค้าตัวอย่างทั้งหมดกลับมา
+function resetDeletedProducts() {
+    localStorage.removeItem('swu_deleted_products');
+    deletedProductIds = [];
+    loadProducts();
 }
 </script>
 
