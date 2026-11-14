@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SWU Dorm Marketplace</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f5f7; margin: 0; padding: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f5f7; margin: 0; padding: 20px; color: #1e293b; }
         .container { max-width: 920px; margin: 0 auto; }
         
         /* Header / User Profile Bar */
@@ -26,7 +26,7 @@
         button:hover { background: #aa0000; }
         button:disabled { background: #cbd5e1; cursor: not-allowed; }
         
-        /* Banner โฆษณา (Ad Box) ปรับตามขนาดรูป */
+        /* Banner โฆษณา (Ad Box) */
         .banner-box { position: relative; width: 100%; min-height: 140px; height: auto; background: #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .banner-box img { width: 100%; height: auto; display: block; object-fit: cover; }
         .banner-badge { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.65); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px); z-index: 2; }
@@ -61,19 +61,241 @@
         .preview-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
 
         /* Modal Overlay & Card */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: white; border-radius: 16px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 16px; box-sizing: border-box; }
+        .modal-content { background: white; border-radius: 16px; max-width: 500px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 24px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .close-btn { position: absolute; top: 16px; right: 20px; font-size: 1.6rem; cursor: pointer; color: #aaa; font-weight: bold; line-height: 1; }
         .close-btn:hover { color: #333; }
         .modal-img-container { position: relative; margin-bottom: 16px; }
-        .modal-img { width: 100%; height: 240px; object-fit: cover; border-radius: 12px; }
-        
-        .btn-webchat { background: #cc0000; margin-bottom: 8px; font-size: 1rem; }
-        .btn-webchat:hover { background: #a30000; }
-        .btn-line { background: #06c755; margin-bottom: 8px; }
-        .btn-line:hover { background: #05b34c; }
-        .btn-call { background: #2563eb; }
-        .btn-call:hover { background: #1d4ed8; }
+        .modal-img { width: 100%; height: 230px; object-fit: cover; border-radius: 12px; }
+
+        /* แถบเลือกช่องทางการชำระเงินในหน้า Order Modal */
+        .payment-selector-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 13px 16px;
+            margin: 14px 0 8px 0;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .payment-selector-row:hover { border-color: #ee4d2d; background: #fffaf9; }
+        .payment-selector-left { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 0.92rem; color: #1e293b; }
+        .payment-selector-right { display: flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #ee4d2d; font-weight: 600; }
+
+        /* กล่องแสดงข้อมูลโอนเงินของผู้ขาย (โชว์เมื่อเลือก QR/โอนเงิน) */
+        .seller-transfer-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+        }
+        .transfer-copy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+        .btn-copy-mini { background: #1e293b; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; width: auto; margin: 0; }
+        .btn-copy-mini:hover { background: #0f172a; }
+
+        .btn-pay-confirm { background: #ee4d2d; margin-bottom: 8px; font-size: 1rem; }
+        .btn-pay-confirm:hover { background: #d73211; }
+        .btn-webchat { background: #ffffff; color: #cc0000; border: 1.5px solid #cc0000; margin-top: 0; font-size: 0.95rem; }
+        .btn-webchat:hover { background: #fef2f2; }
+
+        /* ========================================================
+           หน้าต่าง "ช่องทางการชำระเงิน" (UI ตามภาพต้นแบบ)
+           ======================================================== */
+        .pay-sheet-modal {
+            background: #f5f5f5;
+            border-radius: 18px;
+            max-width: 440px;
+            width: 100%;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.28);
+        }
+        .pay-sheet-header {
+            background: #ffffff;
+            padding: 15px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #efefef;
+            position: relative;
+        }
+        .pay-back-btn {
+            background: none;
+            border: none;
+            color: #ee4d2d;
+            font-size: 1.45rem;
+            font-weight: normal;
+            cursor: pointer;
+            padding: 0 6px;
+            margin: 0;
+            width: auto;
+            line-height: 1;
+        }
+        .pay-back-btn:hover { background: none; opacity: 0.75; }
+        .pay-sheet-title {
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #222222;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .pay-sheet-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        .pay-card-group {
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .pay-section-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555555;
+            padding: 6px 4px 10px 4px;
+        }
+        .pay-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 16px;
+            border-bottom: 1px solid #f4f4f4;
+            cursor: pointer;
+            transition: background 0.12s;
+            background: #ffffff;
+        }
+        .pay-row:last-child { border-bottom: none; }
+        .pay-row:hover { background: #fafafa; }
+        .pay-row.disabled { cursor: not-allowed; opacity: 0.45; }
+        .pay-row.disabled:hover { background: #ffffff; }
+        .pay-sub-row {
+            padding-left: 48px;
+        }
+        .pay-row-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pay-icon-box {
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .pay-label-main {
+            font-size: 0.95rem;
+            color: #222222;
+            font-weight: 400;
+        }
+        .pay-label-sub {
+            font-size: 0.78rem;
+            color: #ef4444;
+            margin-top: 2px;
+        }
+        .pay-plus-box {
+            width: 22px;
+            height: 22px;
+            border: 1px solid #d4d4d8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #71717a;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .pay-row-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        /* Bank Mini Circles (+7) */
+        .bank-mini-icons { display: flex; align-items: center; gap: 5px; }
+        .bank-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: white;
+        }
+        .bank-more-pill {
+            border: 1px solid #e4e4e7;
+            border-radius: 10px;
+            padding: 1px 6px;
+            font-size: 0.72rem;
+            color: #71717a;
+        }
+        /* Custom Radio Circle */
+        .pay-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: 0.15s;
+        }
+        .pay-radio.checked {
+            border-color: #ee4d2d;
+            background: #ee4d2d;
+        }
+        .pay-radio.checked::after {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: white;
+        }
+        .chevron-icon {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+        .pay-sheet-footer {
+            background: #ffffff;
+            padding: 12px 16px;
+            border-top: 1px solid #efefef;
+        }
+        .btn-sheet-confirm {
+            background: #ee4d2d;
+            color: white;
+            border-radius: 8px;
+            padding: 13px;
+            font-size: 0.98rem;
+            margin: 0;
+        }
+        .btn-sheet-confirm:hover { background: #d73211; }
 
         /* ================= IN-WEB CHAT MODAL ================= */
         .chat-container-modal { background: white; border-radius: 16px; max-width: 820px; width: 100%; height: 82vh; max-height: 640px; display: flex; overflow: hidden; box-shadow: 0 20px 35px rgba(0,0,0,0.25); }
@@ -98,7 +320,7 @@
         .msg-bubble-wrap { display: flex; flex-direction: column; max-width: 75%; }
         .msg-bubble-wrap.mine { align-self: flex-end; align-items: flex-end; }
         .msg-bubble-wrap.theirs { align-self: flex-start; align-items: flex-start; }
-        .msg-bubble { padding: 10px 14px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; word-break: break-word; }
+        .msg-bubble { padding: 10px 14px; border-radius: 16px; font-size: 0.92rem; line-height: 1.4; word-break: break-word; white-space: pre-line; }
         .msg-bubble-wrap.mine .msg-bubble { background: #cc0000; color: white; border-bottom-right-radius: 4px; }
         .msg-bubble-wrap.theirs .msg-bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
         .msg-time { font-size: 0.7rem; color: #94a3b8; margin-top: 3px; }
@@ -159,12 +381,6 @@
             <img id="bannerImg" src="" alt="Banner Ad" style="display: none;">
         </div>
 
-        <!-- เครื่องมือเปลี่ยนรูป Banner -->
-        <div class="card" style="padding: 14px 20px; background: #f8fafc; border: 1px dashed #cbd5e1;">
-            <label style="font-weight: bold; font-size: 0.85rem; color: #475569;">🖼️ แทรก/อัปโหลดรูป Banner โฆษณา:</label>
-            <input type="file" id="bannerFileInput" accept="image/*" onchange="changeBannerFromFile(event)">
-        </div>
-        
         <!-- ฟอร์มลงขายของ -->
         <div class="card">
             <h3>+ โพสต์ปล่อยต่อของใช้ในหอพัก</h3>
@@ -178,8 +394,19 @@
                 <option value="ทั่วไป">หมวดหมู่: ของใช้ทั่วไป</option>
             </select>
             <input type="text" id="dorm" placeholder="สถานที่นัดรับ (เช่น คอนโด A / หอพักองครักษ์)">
-            <input type="text" id="line" placeholder="Line ID สำหรับติดต่อ">
-            <input type="text" id="phone" placeholder="เบอร์โทรศัพท์ติดต่อ">
+            
+            <!-- ช่องทางการรับชำระเงินของผู้ขาย -->
+            <label style="font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: block; color: #166534;">💳 ช่องทางการรับชำระเงิน (สำหรับผู้ซื้อโอน/สแกน):</label>
+            <select id="paymentMethod">
+                <option value="QR พร้อมเพย์ / โอนผ่านธนาคาร">QR พร้อมเพย์ / โอนผ่านธนาคาร</option>
+                <option value="โอนธนาคาร / เก็บเงินปลายทาง">โอนผ่านธนาคาร / เก็บเงินปลายทาง (นัดรับ)</option>
+                <option value="เก็บเงินปลายทางเท่านั้น">เก็บเงินปลายทาง (จ่ายเงินสดตอนนัดรับ)</option>
+            </select>
+            <input type="text" id="paymentDetail" placeholder="ระบุเบอร์พร้อมเพย์ หรือ เลขบัญชี + ชื่อบัญชี (เช่น พร้อมเพย์ 081-234-5678 ธัญญลักษณ์)">
+            
+            <label style="font-weight: bold; font-size: 0.85rem; margin-top: 6px; display: block; color: #475569;">แนบรูป QR Code รับชำระเงิน (ถ้ามี):</label>
+            <input type="file" id="qrInput" accept="image/*" onchange="previewQrImage(event)">
+
             <textarea id="desc" rows="3" placeholder="รายละเอียดสินค้าเพิ่มเติม..."></textarea>
 
             <label style="font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: block;">อัปโหลดรูปภาพสินค้า:</label>
@@ -237,7 +464,7 @@
             <p id="modalDesc" style="margin: 4px 0 0 0; color: #334155; font-size: 0.95rem;"></p>
         </div>
 
-        <div class="seller-info" style="margin-bottom: 16px;">
+        <div class="seller-info" style="margin-bottom: 10px;">
             <img id="modalSellerAvatar" class="seller-avatar" style="width: 40px; height: 40px;" src="" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80';">
             <div>
                 <strong id="modalSellerName" style="font-size: 0.95rem; color: #1e293b;"></strong>
@@ -245,23 +472,222 @@
             </div>
         </div>
 
-        <!-- ปุ่มแชทในเว็บ (ฟีเจอร์ใหม่) -->
-        <button id="btnWebChat" class="btn-webchat" onclick="startInWebChat()">💬 แชทกับผู้ขายในเว็บ</button>
-        <button id="btnLine" class="btn-line" onclick="contactLine()">💬 ทักแชทสั่งซื้อผ่าน Line (<span id="modalLineText"></span>)</button>
-        <button id="btnCall" class="btn-call" onclick="contactPhone()">📞 โทรติดต่อผู้ขาย (<span id="modalPhoneText"></span>)</button>
+        <!-- แถบเลือกช่องทางการชำระเงิน (กดเพื่อเปิดหน้า "ช่องทางการชำระเงิน" แบบในรูป) -->
+        <div id="paymentTriggerArea">
+            <div class="payment-selector-row" onclick="openPaymentSheet()">
+                <div class="payment-selector-left">
+                    <span>💳 ช่องทางการชำระเงิน</span>
+                </div>
+                <div class="payment-selector-right">
+                    <span id="selectedPaymentLabel">QR พร้อมเพย์</span>
+                    <span style="color: #94a3b8; font-size: 1.1rem;">›</span>
+                </div>
+            </div>
+
+            <!-- ข้อมูลบัญชีรับเงินของผู้ขาย -->
+            <div class="seller-transfer-card" id="sellerTransferInfo">
+                <div style="font-weight: bold; color: #334155;">บัญชีรับเงินของผู้ขาย:</div>
+                <div class="transfer-copy-row">
+                    <span id="modalPaymentDetail" style="font-weight: 600; color: #0f172a;"></span>
+                    <button type="button" class="btn-copy-mini" onclick="copyPaymentDetail()">คัดลอก</button>
+                </div>
+                <img id="modalPaymentQr" src="" alt="QR Code" style="max-width: 160px; border-radius: 8px; margin: 10px auto 0 auto; display: none; border: 1px solid #e2e8f0;">
+            </div>
+        </div>
+
+        <!-- ปุ่มดำเนินการ -->
+        <button id="btnConfirmOrder" class="btn-pay-confirm" onclick="confirmOrderAndChat()">สั่งซื้อ & แจ้งชำระเงินในแชท</button>
+        <button id="btnWebChat" class="btn-webchat" onclick="startInWebChat()">💬 แชทสอบถามผู้ขายในเว็บ</button>
     </div>
 </div>
 
-<!-- 4. หน้าต่างแชทในเว็บ (In-Web Chat Modal) -->
+<!-- 4. หน้าต่าง "ช่องทางการชำระเงิน" (ดีไซน์ตามภาพตัวอย่าง) -->
+<div id="paymentModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target.id==='paymentModal') closePaymentSheet()">
+    <div class="pay-sheet-modal" onclick="event.stopPropagation()">
+        <!-- Header: ปุ่มย้อนกลับ ← + ช่องทางการชำระเงิน -->
+        <div class="pay-sheet-header">
+            <button type="button" class="pay-back-btn" onclick="closePaymentSheet()">←</button>
+            <div class="pay-sheet-title">ช่องทางการชำระเงิน</div>
+            <div style="width: 28px;"></div>
+        </div>
+
+        <!-- Body -->
+        <div class="pay-sheet-body">
+            <!-- การ์ดกลุ่มบน: ตัดบัญชีธนาคาร + บัตรเครดิต/บัตรเดบิต -->
+            <div class="pay-card-group">
+                <!-- 1. ตัดบัญชีธนาคาร -->
+                <div class="pay-row" onclick="toggleAccordion('bankAccList', 'bankAccChevron')">
+                    <div class="pay-row-left">
+                        <div class="pay-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="#1d4ed8">
+                                <path d="M12 2L2 7v2h20V7L12 2zm-7 9v7H3v2h18v-2h-2v-7h-2v7h-4v-7h-2v7H7v-7H5z"/>
+                            </svg>
+                        </div>
+                        <span class="pay-label-main">ตัดบัญชีธนาคาร</span>
+                    </div>
+                    <span id="bankAccChevron" class="chevron-icon">⌃</span>
+                </div>
+
+                <div id="bankAccList">
+                    <!-- บัญชีที่ผูกไว้ -->
+                    <div id="linkedBankAccounts">
+                        <div class="pay-row pay-sub-row" onclick="selectPayOption('bank_kbank_0268', 'ตัดบัญชี ธ.กสิกรไทย *0268')">
+                            <div class="pay-row-left">
+                                <div class="bank-circle" style="background: #138f2d;">K</div>
+                                <span class="pay-label-main">ธนาคารกสิกรไทย</span>
+                            </div>
+                            <div class="pay-row-right">
+                                <span style="color: #444;">*0268</span>
+                                <div class="pay-radio" id="radio_bank_kbank_0268"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- + ผูกบัญชีธนาคาร -->
+                    <div class="pay-row pay-sub-row" onclick="promptLinkBank()">
+                        <div class="pay-row-left">
+                            <div class="pay-plus-box">+</div>
+                            <span class="pay-label-main">ผูกบัญชีธนาคาร</span>
+                        </div>
+                        <div class="bank-mini-icons">
+                            <div class="bank-circle" style="background: #4e2a84;">SCB</div>
+                            <div class="bank-circle" style="background: #138f2d;">K</div>
+                            <span class="bank-more-pill">+7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. บัตรเครดิต/บัตรเดบิต -->
+                <div class="pay-row" style="border-top: 1px solid #f1f1f1;" onclick="toggleAccordion('cardAccList', 'cardAccChevron')">
+                    <div class="pay-row-left">
+                        <div class="pay-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563eb">
+                                <rect x="2" y="5" width="20" height="14" rx="2.5"/>
+                                <rect x="2" y="8" width="20" height="3" fill="#93c5fd"/>
+                                <rect x="5" y="14" width="5" height="2" fill="#ffffff"/>
+                            </svg>
+                        </div>
+                        <span class="pay-label-main">บัตรเครดิต/บัตรเดบิต</span>
+                    </div>
+                    <span id="cardAccChevron" class="chevron-icon">⌃</span>
+                </div>
+
+                <div id="cardAccList">
+                    <!-- บัตรหมดอายุ (เหมือนในรูป) -->
+                    <div class="pay-row pay-sub-row disabled">
+                        <div class="pay-row-left">
+                            <span style="font-weight: 800; font-style: italic; color: #1e3a8a; font-size: 0.8rem;">VISA</span>
+                            <div>
+                                <div class="pay-label-main">ธนาคารกสิกรไทย</div>
+                                <div class="pay-label-sub">หมดอายุ</div>
+                            </div>
+                        </div>
+                        <div class="pay-row-right">
+                            <span>*0574</span>
+                        </div>
+                    </div>
+
+                    <!-- รายการบัตรใหม่ที่ผู้ใช้เพิ่ม -->
+                    <div id="addedCardsList"></div>
+
+                    <!-- + เพิ่มบัตรใหม่ -->
+                    <div class="pay-row pay-sub-row" onclick="promptAddCard()">
+                        <div class="pay-row-left">
+                            <div class="pay-plus-box">+</div>
+                            <span class="pay-label-main">เพิ่มบัตรใหม่</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- หัวข้อคั่น: ช่องทางการชำระเงินอื่น -->
+            <div class="pay-section-label">ช่องทางการชำระเงินอื่น</div>
+
+            <!-- การ์ดกลุ่มล่าง: QR พร้อมเพย์ / เก็บเงินปลายทาง / Mobile Banking -->
+            <div class="pay-card-group">
+                <!-- QR พร้อมเพย์ -->
+                <div class="pay-row" onclick="selectPayOption('qr_promptpay', 'QR พร้อมเพย์')">
+                    <div class="pay-row-left">
+                        <div class="pay-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                <path d="M14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 18v3"/>
+                            </svg>
+                        </div>
+                        <span class="pay-label-main">QR พร้อมเพย์</span>
+                    </div>
+                    <div class="pay-radio checked" id="radio_qr_promptpay"></div>
+                </div>
+
+                <!-- เก็บเงินปลายทาง -->
+                <div class="pay-row" onclick="selectPayOption('cod_cash', 'เก็บเงินปลายทาง (จ่ายตอนนัดรับ)')">
+                    <div class="pay-row-left">
+                        <div class="pay-icon-box">
+                            <span style="background: #ea580c; color: white; font-size: 0.62rem; font-weight: 800; padding: 2px 4px; border-radius: 4px; letter-spacing: 0.3px;">COD</span>
+                        </div>
+                        <span class="pay-label-main">เก็บเงินปลายทาง</span>
+                    </div>
+                    <div class="pay-radio" id="radio_cod_cash"></div>
+                </div>
+
+                <!-- Mobile Banking -->
+                <div class="pay-row" onclick="toggleAccordion('mobileBankingList', 'mbChevron')">
+                    <div class="pay-row-left">
+                        <div class="pay-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                                <rect x="6" y="2" width="12" height="20" rx="2"/>
+                                <text x="12" y="15" text-anchor="middle" fill="#dc2626" stroke="none" font-size="10" font-weight="bold">$</text>
+                            </svg>
+                        </div>
+                        <span class="pay-label-main">Mobile Banking</span>
+                    </div>
+                    <span id="mbChevron" class="chevron-icon">⌄</span>
+                </div>
+
+                <!-- รายการ Mobile Banking ย่อย (ซ่อนไว้ กดเพื่อกางออก) -->
+                <div id="mobileBankingList" style="display: none; background: #fcfcfc;">
+                    <div class="pay-row pay-sub-row" onclick="selectPayOption('mb_kplus', 'Mobile Banking (K PLUS)')">
+                        <div class="pay-row-left">
+                            <div class="bank-circle" style="background: #138f2d;">K+</div>
+                            <span class="pay-label-main">K PLUS (กสิกรไทย)</span>
+                        </div>
+                        <div class="pay-radio" id="radio_mb_kplus"></div>
+                    </div>
+                    <div class="pay-row pay-sub-row" onclick="selectPayOption('mb_scb', 'Mobile Banking (SCB EASY)')">
+                        <div class="pay-row-left">
+                            <div class="bank-circle" style="background: #4e2a84;">SCB</div>
+                            <span class="pay-label-main">SCB EASY (ไทยพาณิชย์)</span>
+                        </div>
+                        <div class="pay-radio" id="radio_mb_scb"></div>
+                    </div>
+                    <div class="pay-row pay-sub-row" onclick="selectPayOption('mb_ktb', 'Mobile Banking (Krungthai NEXT)')">
+                        <div class="pay-row-left">
+                            <div class="bank-circle" style="background: #00a6e6;">KTB</div>
+                            <span class="pay-label-main">Krungthai NEXT (กรุงไทย)</span>
+                        </div>
+                        <div class="pay-radio" id="radio_mb_ktb"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มยืนยันด้านล่าง -->
+        <div class="pay-sheet-footer">
+            <button type="button" class="btn-sheet-confirm" onclick="confirmPaymentSelection()">ยืนยัน</button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. หน้าต่างแชทในเว็บ (In-Web Chat Modal) -->
 <div id="chatModal" class="modal-overlay" onclick="if(event.target.id==='chatModal') closeChatModal()">
     <div class="chat-container-modal" onclick="event.stopPropagation()">
-        <!-- ซ้าย: รายการห้องแชท -->
         <div class="chat-sidebar">
             <div class="chat-sidebar-header">💬 กล่องข้อความ (แชทในเว็บ)</div>
             <div id="chatThreadList" class="chat-thread-list"></div>
         </div>
 
-        <!-- ขวา: หน้าต่างสนทนา -->
         <div class="chat-main">
             <div class="chat-main-header">
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -274,7 +700,6 @@
                 <span class="close-btn" style="position: static;" onclick="closeChatModal()">&times;</span>
             </div>
 
-            <!-- แถบสินค้าที่กำลังสอบถาม -->
             <div id="chatProductStrip" class="chat-product-strip" style="display: none;">
                 <img id="chatStripImg" src="" alt="" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80';">
                 <div style="flex: 1; min-width: 0;">
@@ -283,21 +708,18 @@
                 </div>
             </div>
 
-            <!-- พื้นที่ข้อความแชท -->
             <div id="chatMessagesBox" class="chat-messages-box">
-                <div style="text-align: center; color: #94a3b8; margin-top: 40px;">เลือกสินค้าแล้วกด "แชทกับผู้ขายในเว็บ" เพื่อเริ่มคุยได้เลย</div>
+                <div style="text-align: center; color: #94a3b8; margin-top: 40px;">เลือกสินค้าแล้วกด "แชทสอบถามผู้ขายในเว็บ" เพื่อเริ่มคุยได้เลย</div>
             </div>
 
-            <!-- ปุ่มข้อความส่งด่วน -->
             <div id="quickRepliesBar" class="quick-replies" style="display: none;">
                 <button type="button" class="quick-chip" onclick="sendQuickText('สวัสดีครับ/ค่ะ สินค้าชิ้นนี้ยังอยู่ไหม?')">สินค้ายังอยู่ไหม?</button>
+                <button type="button" class="quick-chip" onclick="sendQuickText('โอนเงินเรียบร้อยแล้วครับ/ค่ะ นัดรับช่วงเย็นสะดวกไหม?')">โอนเงินแล้ว นัดรับได้เลยไหม?</button>
                 <button type="button" class="quick-chip" onclick="sendQuickText('นัดรับที่หอพัก/คอนโดช่วงเย็นสะดวกไหมครับ/คะ?')">นัดรับช่วงเย็นสะดวกไหม?</button>
-                <button type="button" class="quick-chip" onclick="sendQuickText('ลดราคาได้อีกนิดไหมครับ/คะ?')">ลดได้อีกไหม?</button>
             </div>
 
-            <!-- ช่องพิมพ์ข้อความ -->
             <form id="chatInputForm" class="chat-input-form" style="display: none;" onsubmit="submitChatMessage(event)">
-                <input type="text" id="chatMessageInput" placeholder="พิมพ์ข้อความสอบถามผู้ขาย..." autocomplete="off">
+                <input type="text" id="chatMessageInput" placeholder="พิมพ์ข้อความสอบถามผู้ขายหรือแจ้งโอน..." autocomplete="off">
                 <button type="submit">ส่ง</button>
             </form>
         </div>
@@ -306,12 +728,16 @@
 
 <script>
 let uploadedBase64Image = "";
+let uploadedQrBase64 = "";
 let currentUser = null;
 let allProducts = [];
 let currentSelectedProduct = null;
 let activeThreadId = null;
 
-// เก็บประวัติแชทใน localStorage ควบคู่กับ Server เพื่อให้ใช้ได้ต่อเนื่องบน Vercel
+// สถานะช่องทางการชำระเงินที่ผู้ซื้อเลือก
+let selectedPayKey = "qr_promptpay";
+let selectedPayLabel = "QR พร้อมเพย์";
+
 let localChats = JSON.parse(localStorage.getItem('swu_dorm_chats_v2') || '{}');
 
 function saveLocalChats() {
@@ -330,7 +756,6 @@ function getTimeNow() {
     return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 }
 
-// ฟังก์ชันแทรกรูปภาพ Banner จากเครื่อง
 function changeBannerFromFile(event) {
     const file = event.target.files[0];
     if (file) {
@@ -355,6 +780,17 @@ function previewImage(event) {
             imgElement.src = uploadedBase64Image;
             imgElement.style.display = 'block';
             document.getElementById('previewText').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewQrImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedQrBase64 = e.target.result;
         }
         reader.readAsDataURL(file);
     }
@@ -426,7 +862,7 @@ function renderFilteredProducts() {
                         <img class="seller-avatar" src="${item.seller_avatar}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80';">
                         <div class="seller-text">
                             <b>${item.seller_name}</b><br>
-                            <span>Line: ${item.contact_line}</span>
+                            <span>💳 ${item.payment_method || 'QR พร้อมเพย์'}</span>
                         </div>
                     </div>
                 </div>
@@ -447,30 +883,49 @@ function openOrderModal(index) {
     document.getElementById('modalSellerAvatar').src = currentSelectedProduct.seller_avatar;
     document.getElementById('modalSellerName').innerText = currentSelectedProduct.seller_name;
 
+    const paymentTriggerArea = document.getElementById('paymentTriggerArea');
+    const btnConfirmOrder = document.getElementById('btnConfirmOrder');
     const btnWebChat = document.getElementById('btnWebChat');
-    const btnLine = document.getElementById('btnLine');
-    const btnCall = document.getElementById('btnCall');
     const modalSoldOverlay = document.getElementById('modalSoldOverlay');
 
     if (currentSelectedProduct.is_sold) {
         modalSoldOverlay.style.display = 'flex';
+        paymentTriggerArea.style.display = 'none';
+        btnConfirmOrder.style.display = 'none';
         btnWebChat.disabled = true;
         btnWebChat.innerText = '❌ สินค้านี้ขายออกแล้ว (SOLD OUT)';
-        btnLine.style.display = 'none';
-        btnCall.style.display = 'none';
     } else {
         modalSoldOverlay.style.display = 'none';
+        paymentTriggerArea.style.display = 'block';
+        btnConfirmOrder.style.display = 'block';
+        document.getElementById('selectedPaymentLabel').innerText = selectedPayLabel;
+        document.getElementById('modalPaymentDetail').innerText = currentSelectedProduct.payment_detail || 'พร้อมเพย์ 081-234-5678';
+        
+        const qrImg = document.getElementById('modalPaymentQr');
+        if (currentSelectedProduct.payment_qr) {
+            qrImg.src = currentSelectedProduct.payment_qr;
+            qrImg.style.display = 'block';
+        } else {
+            qrImg.style.display = 'none';
+        }
+
         btnWebChat.disabled = false;
-        btnWebChat.innerText = '💬 แชทกับผู้ขายในเว็บ';
-        btnLine.style.display = 'block';
-        btnCall.style.display = 'block';
-        btnLine.disabled = false;
-        btnCall.disabled = false;
-        btnLine.innerHTML = `💬 ทักแชทสั่งซื้อผ่าน Line (<span id="modalLineText">${currentSelectedProduct.contact_line}</span>)`;
-        btnCall.innerHTML = `📞 โทรติดต่อผู้ขาย (<span id="modalPhoneText">${currentSelectedProduct.contact_phone || 'ไม่ระบุ'}</span>)`;
+        btnWebChat.innerText = '💬 แชทสอบถามผู้ขายในเว็บ';
     }
 
     document.getElementById('orderModal').style.display = 'flex';
+}
+
+function copyPaymentDetail() {
+    if (!currentSelectedProduct) return;
+    const text = currentSelectedProduct.payment_detail || '';
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert(`คัดลอกข้อมูลบัญชีเรียบร้อย:\n${text}`);
+        });
+    } else {
+        alert(`ข้อมูลบัญชี:\n${text}`);
+    }
 }
 
 function closeModal(event) {
@@ -483,14 +938,131 @@ function closeModalDirect() {
     document.getElementById('orderModal').style.display = 'none';
 }
 
-function contactLine() {
-    if (currentSelectedProduct.is_sold) return;
-    alert(`กำลังเชื่อมต่อไปยัง Line ID: ${currentSelectedProduct.contact_line}`);
+// ==========================================
+// ฟังก์ชันหน้าต่าง "ช่องทางการชำระเงิน" (#paymentModal)
+// ==========================================
+function openPaymentSheet() {
+    document.getElementById('paymentModal').style.display = 'flex';
 }
 
-function contactPhone() {
-    if (currentSelectedProduct.is_sold) return;
-    alert(`เบอร์โทรศัพท์ผู้ขาย: ${currentSelectedProduct.contact_phone || 'ไม่ระบุเบอร์โทร'}`);
+function closePaymentSheet() {
+    document.getElementById('paymentModal').style.display = 'none';
+}
+
+function toggleAccordion(listId, chevronId) {
+    const list = document.getElementById(listId);
+    const chevron = document.getElementById(chevronId);
+    if (list.style.display === 'none') {
+        list.style.display = 'block';
+        chevron.innerText = '⌃';
+    } else {
+        list.style.display = 'none';
+        chevron.innerText = '⌄';
+    }
+}
+
+function selectPayOption(key, label) {
+    selectedPayKey = key;
+    selectedPayLabel = label;
+
+    // ล้างสถานะ checked จาก radio ทุกอัน
+    document.querySelectorAll('.pay-radio').forEach(el => el.classList.remove('checked'));
+    const activeRadio = document.getElementById('radio_' + key);
+    if (activeRadio) {
+        activeRadio.classList.add('checked');
+    }
+}
+
+function promptLinkBank() {
+    const bankName = prompt("ระบุชื่อธนาคารที่ต้องการผูก (เช่น ธนาคารไทยพาณิชย์, ธนาคารกรุงไทย):", "ธนาคารไทยพาณิชย์");
+    if (!bankName) return;
+    const last4 = prompt("ระบุเลขท้ายบัญชี 4 หลัก:", "4891") || "4891";
+    const key = "bank_custom_" + Date.now();
+    const label = `ตัดบัญชี ${bankName} *${last4}`;
+
+    const container = document.getElementById('linkedBankAccounts');
+    const div = document.createElement('div');
+    div.className = "pay-row pay-sub-row";
+    div.onclick = () => selectPayOption(key, label);
+    div.innerHTML = `
+        <div class="pay-row-left">
+            <div class="bank-circle" style="background: #4e2a84;">B</div>
+            <span class="pay-label-main">${escapeHTML(bankName)}</span>
+        </div>
+        <div class="pay-row-right">
+            <span style="color: #444;">*${escapeHTML(last4)}</span>
+            <div class="pay-radio" id="radio_${key}"></div>
+        </div>
+    `;
+    container.appendChild(div);
+    selectPayOption(key, label);
+}
+
+function promptAddCard() {
+    const last4 = prompt("ระบุเลขท้ายบัตรเครดิต/เดบิต 4 หลัก:", "8829");
+    if (!last4) return;
+    const key = "card_custom_" + Date.now();
+    const label = `บัตรเครดิต/เดบิต *${last4}`;
+
+    const container = document.getElementById('addedCardsList');
+    const div = document.createElement('div');
+    div.className = "pay-row pay-sub-row";
+    div.onclick = () => selectPayOption(key, label);
+    div.innerHTML = `
+        <div class="pay-row-left">
+            <span style="font-weight: 800; font-style: italic; color: #1e3a8a; font-size: 0.8rem;">VISA</span>
+            <span class="pay-label-main">บัตรเครดิต/เดบิต</span>
+        </div>
+        <div class="pay-row-right">
+            <span style="color: #444;">*${escapeHTML(last4)}</span>
+            <div class="pay-radio" id="radio_${key}"></div>
+        </div>
+    `;
+    container.appendChild(div);
+    selectPayOption(key, label);
+}
+
+function confirmPaymentSelection() {
+    document.getElementById('selectedPaymentLabel').innerText = selectedPayLabel;
+    // ถ้าเลือกเก็บเงินปลายทาง ให้ซ่อนกล่องเลขบัญชีโอนเงินอัตโนมัติ
+    const transferCard = document.getElementById('sellerTransferInfo');
+    if (selectedPayKey === 'cod_cash') {
+        transferCard.style.display = 'none';
+    } else {
+        transferCard.style.display = 'block';
+    }
+    closePaymentSheet();
+}
+
+// กดสั่งซื้อ & แจ้งช่องทางการชำระเงินเข้าแชททันที
+function confirmOrderAndChat() {
+    if (!currentSelectedProduct || currentSelectedProduct.is_sold) return;
+    const product = currentSelectedProduct;
+    const payMethod = selectedPayLabel;
+
+    startInWebChat().then(() => {
+        if (activeThreadId && localChats[activeThreadId]) {
+            const msgText = `✅ แจ้งสั่งซื้อสินค้า: "${product.title}"\n💰 ยอดชำระ: ฿${product.price.toLocaleString()}\n💳 ช่องทางการชำระเงิน: ${payMethod}`;
+            const time = getTimeNow();
+            localChats[activeThreadId].messages.push({ sender: 'buyer', text: msgText, time });
+            saveLocalChats();
+            renderChatThreads();
+            renderChatMessages();
+
+            setTimeout(() => {
+                if (localChats[activeThreadId]) {
+                    localChats[activeThreadId].messages.push({
+                        sender: 'seller',
+                        text: `รับทราบออเดอร์ครับ/ค่ะ (${payMethod}) สะดวกนัดรับที่ "${product.dorm_location}" เวลาไหนแจ้งได้เลยนะ`,
+                        time: getTimeNow()
+                    });
+                    saveLocalChats();
+                    renderChatThreads();
+                    renderChatMessages();
+                }
+            }, 900);
+        }
+    });
 }
 
 // ==========================================
@@ -514,7 +1086,7 @@ async function startInWebChat() {
             messages: [
                 {
                     sender: 'seller',
-                    text: `สวัสดีครับ/ค่ะ สนใจ "${currentSelectedProduct.title}" สอบถามรายละเอียดหรือนัดรับได้เลยนะ`,
+                    text: `สวัสดีครับ/ค่ะ สนใจ "${currentSelectedProduct.title}" สอบถามรายละเอียดหรือแจ้งชำระเงินได้เลยนะ`,
                     time: getTimeNow()
                 }
             ]
@@ -522,7 +1094,6 @@ async function startInWebChat() {
         saveLocalChats();
     }
 
-    // แจ้ง Backend สร้างห้องแชทควบคู่กัน
     fetch('/api/chats/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -633,14 +1204,12 @@ function submitChatMessage(event) {
     renderChatThreads();
     renderChatMessages();
 
-    // บันทึกลง Backend API
     fetch('/api/chats/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ threadId: activeThreadId, text, time })
     }).catch(() => {});
 
-    // จำลองการตอบกลับอัตโนมัติจากผู้ขายเพื่อทดสอบระบบ
     const thread = localChats[activeThreadId];
     const prod = allProducts.find(p => p.id === thread.productId);
     const replies = (prod && prod.auto_replies) ? prod.auto_replies : [
@@ -680,8 +1249,8 @@ async function addProduct() {
     const price = document.getElementById('price').value;
     const category = document.getElementById('category').value;
     const dorm_location = document.getElementById('dorm').value;
-    const contact_line = document.getElementById('line').value;
-    const contact_phone = document.getElementById('phone').value;
+    const payment_method = document.getElementById('paymentMethod').value;
+    const payment_detail = document.getElementById('paymentDetail').value;
     const description = document.getElementById('desc').value;
 
     if (!title || !price) {
@@ -697,8 +1266,9 @@ async function addProduct() {
             price, 
             category,
             dorm_location, 
-            contact_line, 
-            contact_phone,
+            payment_method,
+            payment_detail,
+            payment_qr: uploadedQrBase64,
             description,
             image_url: uploadedBase64Image,
             seller_name: currentUser.name,
@@ -711,13 +1281,14 @@ async function addProduct() {
         document.getElementById('title').value = '';
         document.getElementById('price').value = '';
         document.getElementById('dorm').value = '';
-        document.getElementById('line').value = '';
-        document.getElementById('phone').value = '';
+        document.getElementById('paymentDetail').value = '';
+        document.getElementById('qrInput').value = '';
         document.getElementById('desc').value = '';
         document.getElementById('imageInput').value = '';
         document.getElementById('imgPreview').style.display = 'none';
         document.getElementById('previewText').style.display = 'block';
         uploadedBase64Image = "";
+        uploadedQrBase64 = "";
         
         loadProducts();
     }
