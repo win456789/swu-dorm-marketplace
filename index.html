@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWU Dorm Marketplace</title>
+    <title>SWU Prasarnmit Dorm Marketplace</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f5f7; margin: 0; padding: 20px; color: #1e293b; }
         .container { max-width: 920px; margin: 0 auto; }
@@ -20,7 +20,7 @@
         .chat-count-badge { background: #cc0000; color: white; font-size: 0.75rem; padding: 2px 7px; border-radius: 12px; }
 
         .card { background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 24px; }
-        h1 { color: #cc0000; margin: 0; font-size: 1.8rem; }
+        h1 { color: #cc0000; margin: 0; font-size: 1.7rem; }
         input, textarea, select, button { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; font-family: inherit; }
         button { background: #cc0000; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { background: #aa0000; }
@@ -32,8 +32,9 @@
         .banner-badge { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.65); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px); z-index: 2; }
         .banner-placeholder { text-align: center; color: #64748b; font-weight: 500; padding: 30px 16px; }
         
-        /* Filter Bar */
-        .filter-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+        /* Filter Bar (2 ช่องเต็มความกว้างพอดี) */
+        .filter-row { display: grid; grid-template-columns: 2.5fr 1fr; gap: 12px; margin-bottom: 18px; align-items: center; }
+        .filter-row input, .filter-row select { width: 100%; height: 46px; margin: 0; padding: 0 14px; border-radius: 10px; border: 1px solid #e2e8f0; background-color: #ffffff; font-size: 0.95rem; }
         @media (max-width: 640px) { .filter-row { grid-template-columns: 1fr; } }
 
         /* Product Grid */
@@ -69,42 +70,14 @@
         .modal-img { width: 100%; height: 230px; object-fit: cover; border-radius: 12px; }
 
         /* แถบเลือกช่องทางการชำระเงินในหน้า Order Modal */
-        .payment-selector-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 13px 16px;
-            margin: 14px 0 8px 0;
-            cursor: pointer;
-            transition: 0.15s;
-        }
+        .payment-selector-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 13px 16px; margin: 14px 0 8px 0; cursor: pointer; transition: 0.15s; }
         .payment-selector-row:hover { border-color: #ee4d2d; background: #fffaf9; }
         .payment-selector-left { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 0.92rem; color: #1e293b; }
         .payment-selector-right { display: flex; align-items: center; gap: 6px; font-size: 0.88rem; color: #ee4d2d; font-weight: 600; }
 
-        /* กล่องแสดงข้อมูลโอนเงินของผู้ขาย (โชว์เมื่อเลือก QR/โอนเงิน) */
-        .seller-transfer-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            font-size: 0.88rem;
-        }
-        .transfer-copy-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-            background: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px dashed #cbd5e1;
-        }
+        /* กล่องแสดงข้อมูลโอนเงินของผู้ขาย */
+        .seller-transfer-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; font-size: 0.88rem; }
+        .transfer-copy-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; background: white; padding: 8px 12px; border-radius: 8px; border: 1px dashed #cbd5e1; }
         .btn-copy-mini { background: #1e293b; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.78rem; width: auto; margin: 0; }
         .btn-copy-mini:hover { background: #0f172a; }
 
@@ -113,188 +86,29 @@
         .btn-webchat { background: #ffffff; color: #cc0000; border: 1.5px solid #cc0000; margin-top: 0; font-size: 0.95rem; }
         .btn-webchat:hover { background: #fef2f2; }
 
-        /* ========================================================
-           หน้าต่าง "ช่องทางการชำระเงิน" (UI ตามภาพต้นแบบ)
-           ======================================================== */
-        .pay-sheet-modal {
-            background: #f5f5f5;
-            border-radius: 18px;
-            max-width: 440px;
-            width: 100%;
-            max-height: 92vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.28);
-        }
-        .pay-sheet-header {
-            background: #ffffff;
-            padding: 15px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #efefef;
-            position: relative;
-        }
-        .pay-back-btn {
-            background: none;
-            border: none;
-            color: #ee4d2d;
-            font-size: 1.45rem;
-            font-weight: normal;
-            cursor: pointer;
-            padding: 0 6px;
-            margin: 0;
-            width: auto;
-            line-height: 1;
-        }
+        /* หน้าต่าง "ช่องทางการชำระเงิน" */
+        .pay-sheet-modal { background: #f5f5f5; border-radius: 18px; max-width: 440px; width: 100%; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.28); }
+        .pay-sheet-header { background: #ffffff; padding: 15px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #efefef; position: relative; }
+        .pay-back-btn { background: none; border: none; color: #ee4d2d; font-size: 1.45rem; font-weight: normal; cursor: pointer; padding: 0 6px; margin: 0; width: auto; line-height: 1; }
         .pay-back-btn:hover { background: none; opacity: 0.75; }
-        .pay-sheet-title {
-            font-size: 1.08rem;
-            font-weight: 600;
-            color: #222222;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .pay-sheet-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-        }
-        .pay-card-group {
-            background: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-        }
-        .pay-section-label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #555555;
-            padding: 6px 4px 10px 4px;
-        }
-        .pay-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 16px;
-            border-bottom: 1px solid #f4f4f4;
-            cursor: pointer;
-            transition: background 0.12s;
-            background: #ffffff;
-        }
+        .pay-sheet-title { font-size: 1.08rem; font-weight: 600; color: #222222; position: absolute; left: 50%; transform: translateX(-50%); }
+        .pay-sheet-body { flex: 1; overflow-y: auto; padding: 14px 12px 18px 12px; }
+        .pay-section-label { font-size: 0.92rem; font-weight: 600; color: #555555; padding: 2px 4px 10px 4px; }
+        .pay-card-group { background: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .pay-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid #f2f2f2; cursor: pointer; transition: background 0.12s; background: #ffffff; }
         .pay-row:last-child { border-bottom: none; }
         .pay-row:hover { background: #fafafa; }
-        .pay-row.disabled { cursor: not-allowed; opacity: 0.45; }
-        .pay-row.disabled:hover { background: #ffffff; }
-        .pay-sub-row {
-            padding-left: 48px;
-        }
-        .pay-row-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .pay-icon-box {
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .pay-label-main {
-            font-size: 0.95rem;
-            color: #222222;
-            font-weight: 400;
-        }
-        .pay-label-sub {
-            font-size: 0.78rem;
-            color: #ef4444;
-            margin-top: 2px;
-        }
-        .pay-plus-box {
-            width: 22px;
-            height: 22px;
-            border: 1px solid #d4d4d8;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #71717a;
-            font-size: 1rem;
-            line-height: 1;
-        }
-        .pay-row-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #555;
-            font-size: 0.9rem;
-        }
-        /* Bank Mini Circles (+7) */
-        .bank-mini-icons { display: flex; align-items: center; gap: 5px; }
-        .bank-circle {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
-            font-weight: bold;
-            color: white;
-        }
-        .bank-more-pill {
-            border: 1px solid #e4e4e7;
-            border-radius: 10px;
-            padding: 1px 6px;
-            font-size: 0.72rem;
-            color: #71717a;
-        }
-        /* Custom Radio Circle */
-        .pay-radio {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 1.5px solid #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: 0.15s;
-        }
-        .pay-radio.checked {
-            border-color: #ee4d2d;
-            background: #ee4d2d;
-        }
-        .pay-radio.checked::after {
-            content: "";
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: white;
-        }
-        .chevron-icon {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            transition: transform 0.2s;
-        }
-        .pay-sheet-footer {
-            background: #ffffff;
-            padding: 12px 16px;
-            border-top: 1px solid #efefef;
-        }
-        .btn-sheet-confirm {
-            background: #ee4d2d;
-            color: white;
-            border-radius: 8px;
-            padding: 13px;
-            font-size: 0.98rem;
-            margin: 0;
-        }
+        .pay-sub-row { padding: 13px 18px 13px 54px; background: #fcfcfc; }
+        .pay-row-left { display: flex; align-items: center; gap: 14px; }
+        .pay-icon-box { width: 30px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .pay-label-main { font-size: 0.98rem; color: #222222; font-weight: 400; }
+        .bank-circle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: bold; color: white; }
+        .pay-radio { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #cbd5e1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.15s; }
+        .pay-radio.checked { border-color: #ee4d2d; background: #ee4d2d; }
+        .pay-radio.checked::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: white; }
+        .chevron-icon { color: #9ca3af; font-size: 0.95rem; padding-right: 4px; }
+        .pay-sheet-footer { background: #ffffff; padding: 12px 16px; border-top: 1px solid #efefef; }
+        .btn-sheet-confirm { background: #ee4d2d; color: white; border-radius: 8px; padding: 13px; font-size: 0.98rem; margin: 0; }
         .btn-sheet-confirm:hover { background: #d73211; }
 
         /* ================= IN-WEB CHAT MODAL ================= */
@@ -343,7 +157,10 @@
 
 <div class="container">
     <div class="header-bar">
-        <h1>SWU Dorm Marketplace 🏫</h1>
+        <div>
+            <h1>SWU Dorm Marketplace 🏫</h1>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">ตลาดส่งต่อของใช้หอพัก/คอนโด สำหรับนิสิต มศว ประสานมิตร</div>
+        </div>
         
         <div id="header-actions" class="header-right" style="display: none;">
             <button class="inbox-btn" onclick="openChatInbox()">
@@ -353,7 +170,7 @@
                 <img id="myAvatar" class="user-avatar" src="" alt="Avatar">
                 <div>
                     <div id="myName" class="user-name"></div>
-                    <div style="font-size: 0.75rem; color: #22c55e;">● Thanyalak Kanthadong (ผู้ซื้อ)</div>
+                    <div style="font-size: 0.75rem; color: #22c55e;">● นิสิต มศว ประสานมิตร (ผู้ซื้อ)</div>
                 </div>
             </div>
         </div>
@@ -361,8 +178,8 @@
 
     <!-- 1. ส่วนล็อกอิน -->
     <div id="login-section" class="card">
-        <h3>เข้าสู่ระบบนิสิต มศว</h3>
-        <p style="color: #666; font-size: 0.9rem;">กรอกอีเมลมหาวิทยาลัยเพื่อทดสอบระบบ (@g.swu.ac.th)</p>
+        <h3>เข้าสู่ระบบนิสิต มศว ประสานมิตร</h3>
+        <p style="color: #666; font-size: 0.9rem;">กรอกอีเมลมหาวิทยาลัยเพื่อเข้าใช้งาน (@g.swu.ac.th)</p>
         <input type="email" id="emailInput" placeholder="ตัวอย่าง: 6xxxxxxxxx@g.swu.ac.th">
         <button onclick="login()">เข้าสู่ระบบ</button>
         <p id="login-msg" style="color: red; margin-top: 8px; font-size: 0.9rem;"></p>
@@ -376,13 +193,14 @@
             <span class="banner-badge">Sponsor / Ad</span>
             <div id="bannerPlaceholder" class="banner-placeholder">
                 📌 พื้นที่สำหรับแทรกรูปภาพ Banner โฆษณา<br>
+                <span style="font-size: 0.8rem; color: #94a3b8;">(คุณสามารถแทรกรูปภาพในเครื่องหรืออัปโหลดเปลี่ยนรูปได้จากปุ่มด้านล่าง)</span>
             </div>
             <img id="bannerImg" src="" alt="Banner Ad" style="display: none;">
         </div>
 
         <!-- ฟอร์มลงขายของ -->
         <div class="card">
-            <h3>+ โพสต์ปล่อยต่อของใช้ในหอพัก</h3>
+            <h3>+ โพสต์ปล่อยต่อของใช้ในหอพัก / คอนโด (มศว ประสานมิตร)</h3>
             <input type="text" id="title" placeholder="ชื่อสินค้า (เช่น ตู้เย็น, พัดลม, โต๊ะญี่ปุ่น)">
             <input type="number" id="price" placeholder="ราคา (บาท)">
             <select id="category">
@@ -392,16 +210,16 @@
                 <option value="เครื่องแต่งตัว">หมวดหมู่: เครื่องแต่งตัว</option>
                 <option value="ทั่วไป">หมวดหมู่: ของใช้ทั่วไป</option>
             </select>
-            <input type="text" id="dorm" placeholder="สถานที่นัดรับ (เช่น คอนโด A / หอพักองครักษ์)">
+            <input type="text" id="dorm" placeholder="สถานที่นัดรับรอบ มศว ประสานมิตร (เช่น คอนโด Supalai, Life Asoke, สุขุมวิท 23)">
             
             <!-- ช่องทางการรับชำระเงินของผู้ขาย -->
             <label style="font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: block; color: #166534;">💳 ช่องทางการรับชำระเงิน (สำหรับผู้ซื้อโอน/สแกน):</label>
             <select id="paymentMethod">
-                <option value="QR พร้อมเพย์ / โอนผ่านธนาคาร">QR พร้อมเพย์ / โอนผ่านธนาคาร</option>
-                <option value="โอนธนาคาร / เก็บเงินปลายทาง">โอนผ่านธนาคาร / เก็บเงินปลายทาง (นัดรับ)</option>
+                <option value="Mobile Banking">Mobile Banking</option>
+                <option value="QR พร้อมเพย์">QR พร้อมเพย์</option>
                 <option value="เก็บเงินปลายทางเท่านั้น">เก็บเงินปลายทาง (จ่ายเงินสดตอนนัดรับ)</option>
             </select>
-            <input type="text" id="paymentDetail" placeholder="ระบุเบอร์พร้อมเพย์ หรือ เลขบัญชี + ชื่อบัญชี (เช่น พร้อมเพย์ 081-234-5678 ธัญญลักษณ์)">
+            <input type="text" id="paymentDetail" placeholder="ระบุเบอร์พร้อมเพย์ หรือ เลขบัญชี และ ชื่อบัญชี">
             
             <label style="font-weight: bold; font-size: 0.85rem; margin-top: 6px; display: block; color: #475569;">แนบรูป QR Code รับชำระเงิน (ถ้ามี):</label>
             <input type="file" id="qrInput" accept="image/*" onchange="previewQrImage(event)">
@@ -419,7 +237,7 @@
         </div>
 
         <!-- ค้นหาและกรองรายการสินค้า -->
-        <h2>รายการสินค้าพร้อมส่งต่อ</h2>
+        <h2>รายการสินค้าพร้อมส่งต่อ (มศว ประสานมิตร)</h2>
         <div class="filter-row">
             <input type="text" id="searchInput" placeholder="🔍 ค้นหาชื่อสินค้า..." oninput="renderFilteredProducts()">
             <select id="filterCategory" onchange="renderFilteredProducts()">
@@ -428,11 +246,6 @@
                 <option value="เฟอร์นิเจอร์">เฟอร์นิเจอร์</option>
                 <option value="หนังสือเรียน">หนังสือเรียน</option>
                 <option value="เครื่องแต่งตัว">เครื่องแต่งตัว</option>
-            </select>
-            <select id="filterDorm" onchange="renderFilteredProducts()">
-                <option value="">ทุกพื้นที่ / หอพัก</option>
-                <option value="ประสานมิตร">มศว ประสานมิตร / อโศก</option>
-                <option value="องครักษ์">มศว องครักษ์</option>
             </select>
         </div>
 
@@ -467,11 +280,11 @@
             <img id="modalSellerAvatar" class="seller-avatar" style="width: 40px; height: 40px;" src="" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80';">
             <div>
                 <strong id="modalSellerName" style="font-size: 0.95rem; color: #1e293b;"></strong>
-                <div style="font-size: 0.8rem; color: #64748b;">ผู้ขาย (นิสิต มศว)</div>
+                <div style="font-size: 0.8rem; color: #64748b;">ผู้ขาย (นิสิต มศว ประสานมิตร)</div>
             </div>
         </div>
 
-        <!-- แถบเลือกช่องทางการชำระเงิน (กดเพื่อเปิดหน้า "ช่องทางการชำระเงิน" แบบในรูป) -->
+        <!-- แถบเลือกช่องทางการชำระเงิน -->
         <div id="paymentTriggerArea">
             <div class="payment-selector-row" onclick="openPaymentSheet()">
                 <div class="payment-selector-left">
@@ -500,115 +313,24 @@
     </div>
 </div>
 
-<!-- 4. หน้าต่าง "ช่องทางการชำระเงิน" (ดีไซน์ตามภาพตัวอย่าง) -->
+<!-- 4. หน้าต่าง "ช่องทางการชำระเงิน" -->
 <div id="paymentModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target.id==='paymentModal') closePaymentSheet()">
     <div class="pay-sheet-modal" onclick="event.stopPropagation()">
-        <!-- Header: ปุ่มย้อนกลับ ← + ช่องทางการชำระเงิน -->
         <div class="pay-sheet-header">
             <button type="button" class="pay-back-btn" onclick="closePaymentSheet()">←</button>
             <div class="pay-sheet-title">ช่องทางการชำระเงิน</div>
             <div style="width: 28px;"></div>
         </div>
 
-        <!-- Body -->
         <div class="pay-sheet-body">
-            <!-- การ์ดกลุ่มบน: ตัดบัญชีธนาคาร + บัตรเครดิต/บัตรเดบิต -->
-            <div class="pay-card-group">
-                <!-- 1. ตัดบัญชีธนาคาร -->
-                <div class="pay-row" onclick="toggleAccordion('bankAccList', 'bankAccChevron')">
-                    <div class="pay-row-left">
-                        <div class="pay-icon-box">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="#1d4ed8">
-                                <path d="M12 2L2 7v2h20V7L12 2zm-7 9v7H3v2h18v-2h-2v-7h-2v7h-4v-7h-2v7H7v-7H5z"/>
-                            </svg>
-                        </div>
-                        <span class="pay-label-main">ตัดบัญชีธนาคาร</span>
-                    </div>
-                    <span id="bankAccChevron" class="chevron-icon">⌃</span>
-                </div>
-
-                <div id="bankAccList">
-                    <!-- บัญชีที่ผูกไว้ -->
-                    <div id="linkedBankAccounts">
-                        <div class="pay-row pay-sub-row" onclick="selectPayOption('bank_kbank_0268', 'ตัดบัญชี ธ.กสิกรไทย *0268')">
-                            <div class="pay-row-left">
-                                <div class="bank-circle" style="background: #138f2d;">K</div>
-                                <span class="pay-label-main">ธนาคารกสิกรไทย</span>
-                            </div>
-                            <div class="pay-row-right">
-                                <span style="color: #444;">*0268</span>
-                                <div class="pay-radio" id="radio_bank_kbank_0268"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- + ผูกบัญชีธนาคาร -->
-                    <div class="pay-row pay-sub-row" onclick="promptLinkBank()">
-                        <div class="pay-row-left">
-                            <div class="pay-plus-box">+</div>
-                            <span class="pay-label-main">ผูกบัญชีธนาคาร</span>
-                        </div>
-                        <div class="bank-mini-icons">
-                            <div class="bank-circle" style="background: #4e2a84;">SCB</div>
-                            <div class="bank-circle" style="background: #138f2d;">K</div>
-                            <span class="bank-more-pill">+7</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. บัตรเครดิต/บัตรเดบิต -->
-                <div class="pay-row" style="border-top: 1px solid #f1f1f1;" onclick="toggleAccordion('cardAccList', 'cardAccChevron')">
-                    <div class="pay-row-left">
-                        <div class="pay-icon-box">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563eb">
-                                <rect x="2" y="5" width="20" height="14" rx="2.5"/>
-                                <rect x="2" y="8" width="20" height="3" fill="#93c5fd"/>
-                                <rect x="5" y="14" width="5" height="2" fill="#ffffff"/>
-                            </svg>
-                        </div>
-                        <span class="pay-label-main">บัตรเครดิต/บัตรเดบิต</span>
-                    </div>
-                    <span id="cardAccChevron" class="chevron-icon">⌃</span>
-                </div>
-
-                <div id="cardAccList">
-                    <!-- บัตรหมดอายุ (เหมือนในรูป) -->
-                    <div class="pay-row pay-sub-row disabled">
-                        <div class="pay-row-left">
-                            <span style="font-weight: 800; font-style: italic; color: #1e3a8a; font-size: 0.8rem;">VISA</span>
-                            <div>
-                                <div class="pay-label-main">ธนาคารกสิกรไทย</div>
-                                <div class="pay-label-sub">หมดอายุ</div>
-                            </div>
-                        </div>
-                        <div class="pay-row-right">
-                            <span>*0574</span>
-                        </div>
-                    </div>
-
-                    <!-- รายการบัตรใหม่ที่ผู้ใช้เพิ่ม -->
-                    <div id="addedCardsList"></div>
-
-                    <!-- + เพิ่มบัตรใหม่ -->
-                    <div class="pay-row pay-sub-row" onclick="promptAddCard()">
-                        <div class="pay-row-left">
-                            <div class="pay-plus-box">+</div>
-                            <span class="pay-label-main">เพิ่มบัตรใหม่</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- หัวข้อคั่น: ช่องทางการชำระเงินอื่น -->
             <div class="pay-section-label">ช่องทางการชำระเงินอื่น</div>
 
-            <!-- การ์ดกลุ่มล่าง: QR พร้อมเพย์ / เก็บเงินปลายทาง / Mobile Banking -->
             <div class="pay-card-group">
-                <!-- QR พร้อมเพย์ -->
+                <!-- 1. QR พร้อมเพย์ -->
                 <div class="pay-row" onclick="selectPayOption('qr_promptpay', 'QR พร้อมเพย์')">
                     <div class="pay-row-left">
                         <div class="pay-icon-box">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2">
                                 <rect x="3" y="3" width="7" height="7" rx="1"/>
                                 <rect x="14" y="3" width="7" height="7" rx="1"/>
                                 <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -620,22 +342,22 @@
                     <div class="pay-radio checked" id="radio_qr_promptpay"></div>
                 </div>
 
-                <!-- เก็บเงินปลายทาง -->
-                <div class="pay-row" onclick="selectPayOption('cod_cash', 'เก็บเงินปลายทาง (จ่ายตอนนัดรับ)')">
+                <!-- 2. เก็บเงินปลายทาง -->
+                <div class="pay-row" onclick="selectPayOption('cod_cash', 'เก็บเงินปลายทาง')">
                     <div class="pay-row-left">
                         <div class="pay-icon-box">
-                            <span style="background: #ea580c; color: white; font-size: 0.62rem; font-weight: 800; padding: 2px 4px; border-radius: 4px; letter-spacing: 0.3px;">COD</span>
+                            <span style="background: #ea580c; color: white; font-size: 0.66rem; font-weight: 800; padding: 3px 6px; border-radius: 5px; letter-spacing: 0.4px;">COD</span>
                         </div>
                         <span class="pay-label-main">เก็บเงินปลายทาง</span>
                     </div>
                     <div class="pay-radio" id="radio_cod_cash"></div>
                 </div>
 
-                <!-- Mobile Banking -->
+                <!-- 3. Mobile Banking -->
                 <div class="pay-row" onclick="toggleAccordion('mobileBankingList', 'mbChevron')">
                     <div class="pay-row-left">
                         <div class="pay-icon-box">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
                                 <rect x="6" y="2" width="12" height="20" rx="2"/>
                                 <text x="12" y="15" text-anchor="middle" fill="#dc2626" stroke="none" font-size="10" font-weight="bold">$</text>
                             </svg>
@@ -645,8 +367,7 @@
                     <span id="mbChevron" class="chevron-icon">⌄</span>
                 </div>
 
-                <!-- รายการ Mobile Banking ย่อย (ซ่อนไว้ กดเพื่อกางออก) -->
-                <div id="mobileBankingList" style="display: none; background: #fcfcfc;">
+                <div id="mobileBankingList" style="display: none;">
                     <div class="pay-row pay-sub-row" onclick="selectPayOption('mb_kplus', 'Mobile Banking (K PLUS)')">
                         <div class="pay-row-left">
                             <div class="bank-circle" style="background: #138f2d;">K+</div>
@@ -672,7 +393,6 @@
             </div>
         </div>
 
-        <!-- ปุ่มยืนยันด้านล่าง -->
         <div class="pay-sheet-footer">
             <button type="button" class="btn-sheet-confirm" onclick="confirmPaymentSelection()">ยืนยัน</button>
         </div>
@@ -693,7 +413,7 @@
                     <img id="chatPartnerAvatar" class="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80" alt="">
                     <div>
                         <div id="chatPartnerName" style="font-weight: bold; font-size: 0.95rem; color: #1e293b;">เลือกห้องสนทนา</div>
-                        <div style="font-size: 0.75rem; color: #22c55e;">● นิสิต มศว</div>
+                        <div style="font-size: 0.75rem; color: #22c55e;">● นิสิต มศว ประสานมิตร</div>
                     </div>
                 </div>
                 <span class="close-btn" style="position: static;" onclick="closeChatModal()">&times;</span>
@@ -714,7 +434,7 @@
             <div id="quickRepliesBar" class="quick-replies" style="display: none;">
                 <button type="button" class="quick-chip" onclick="sendQuickText('สวัสดีครับ/ค่ะ สินค้าชิ้นนี้ยังอยู่ไหม?')">สินค้ายังอยู่ไหม?</button>
                 <button type="button" class="quick-chip" onclick="sendQuickText('โอนเงินเรียบร้อยแล้วครับ/ค่ะ นัดรับช่วงเย็นสะดวกไหม?')">โอนเงินแล้ว นัดรับได้เลยไหม?</button>
-                <button type="button" class="quick-chip" onclick="sendQuickText('นัดรับที่หอพัก/คอนโดช่วงเย็นสะดวกไหมครับ/คะ?')">นัดรับช่วงเย็นสะดวกไหม?</button>
+                <button type="button" class="quick-chip" onclick="sendQuickText('นัดรับแถว มศว ประสานมิตร ช่วงเย็นสะดวกไหมครับ/คะ?')">นัดรับช่วงเย็นสะดวกไหม?</button>
             </div>
 
             <form id="chatInputForm" class="chat-input-form" style="display: none;" onsubmit="submitChatMessage(event)">
@@ -733,15 +453,128 @@ let allProducts = [];
 let currentSelectedProduct = null;
 let activeThreadId = null;
 
-// สถานะช่องทางการชำระเงินที่ผู้ซื้อเลือก
 let selectedPayKey = "qr_promptpay";
 let selectedPayLabel = "QR พร้อมเพย์";
 
 let localChats = JSON.parse(localStorage.getItem('swu_dorm_chats_v2') || '{}');
 
-function saveLocalChats() {
+// ========================================================
+// 🧹 ล้างห้องแชทที่ซ้ำกันในเครื่องอัตโนมัติ (1 สินค้า = 1 ห้องแชท)
+// ========================================================
+function deduplicateChats() {
+    const cleaned = {};
+    Object.values(localChats).forEach(t => {
+        const uniqueKey = t.productId ? `chat_prod_${t.productId}` : `chat_title_${t.productTitle}`;
+        t.threadId = uniqueKey;
+        cleaned[uniqueKey] = t; // หากมีซ้ำ ระบบจะเก็บเฉพาะห้องล่าสุดทับห้องเก่าทันที
+    });
+    localChats = cleaned;
     localStorage.setItem('swu_dorm_chats_v2', JSON.stringify(localChats));
+}
+deduplicateChats();
+
+function saveLocalChats() {
+    deduplicateChats();
     updateChatBadge();
+}
+
+async function startInWebChat() {
+    if (!currentSelectedProduct || currentSelectedProduct.is_sold) return;
+
+    // ใช้รหัสสินค้าเป็นคีย์หลัก ป้องกันการสร้างห้องแชทซ้ำแม้เปลี่ยนอีเมลล็อกอิน
+    const threadId = `chat_prod_${currentSelectedProduct.id}`;
+
+    if (!localChats[threadId]) {
+        localChats[threadId] = {
+            threadId,
+            productId: currentSelectedProduct.id,
+            productTitle: currentSelectedProduct.title,
+            productPrice: currentSelectedProduct.price,
+            productImg: currentSelectedProduct.image_url,
+            sellerName: currentSelectedProduct.seller_name,
+            sellerAvatar: currentSelectedProduct.seller_avatar,
+            messages: [
+                {
+                    sender: 'seller',
+                    text: `สวัสดีครับ/ค่ะ สนใจ "${currentSelectedProduct.title}" สอบถามรายละเอียดหรือนัดรับแถว มศว ประสานมิตร ได้เลยนะ`,
+                    time: getTimeNow()
+                }
+            ]
+        };
+        saveLocalChats();
+    }
+
+    fetch('/api/chats/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: currentSelectedProduct.id })
+    }).catch(() => {});
+
+    closeModalDirect();
+    activeThreadId = threadId;
+    openChatInbox();
+}
+
+function openChatInbox() {
+    deduplicateChats();
+    document.getElementById('chatModal').style.display = 'flex';
+    const keys = Object.keys(localChats);
+    if ((!activeThreadId || !localChats[activeThreadId]) && keys.length > 0) {
+        activeThreadId = keys[0];
+    }
+    renderChatThreads();
+    if (activeThreadId && localChats[activeThreadId]) {
+        selectChatThread(activeThreadId);
+    }
+}
+
+function closeChatModal() {
+    document.getElementById('chatModal').style.display = 'none';
+}
+
+function deleteChatThread(event, threadId) {
+    event.stopPropagation();
+    delete localChats[threadId];
+    if (activeThreadId === threadId) {
+        activeThreadId = Object.keys(localChats)[0] || null;
+    }
+    saveLocalChats();
+    renderChatThreads();
+    if (activeThreadId) {
+        selectChatThread(activeThreadId);
+    } else {
+        document.getElementById('chatProductStrip').style.display = 'none';
+        document.getElementById('quickRepliesBar').style.display = 'none';
+        document.getElementById('chatInputForm').style.display = 'none';
+        document.getElementById('chatPartnerName').innerText = 'เลือกห้องสนทนา';
+        document.getElementById('chatMessagesBox').innerHTML = `<div style="text-align: center; color: #94a3b8; margin-top: 40px;">เลือกสินค้าแล้วกด "แชทสอบถามผู้ขายในเว็บ" เพื่อเริ่มคุยได้เลย</div>`;
+    }
+}
+
+function renderChatThreads() {
+    const listEl = document.getElementById('chatThreadList');
+    const threads = Object.values(localChats);
+
+    if (threads.length === 0) {
+        listEl.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8; font-size: 0.85rem;">ยังไม่มีรายการแชท</div>`;
+        return;
+    }
+
+    listEl.innerHTML = threads.map(t => {
+        const lastMsg = t.messages[t.messages.length - 1];
+        const isActive = t.threadId === activeThreadId ? 'active' : '';
+        return `
+            <div class="chat-thread-item ${isActive}" onclick="selectChatThread('${t.threadId}')">
+                <img class="thread-avatar" src="${t.sellerAvatar}" alt="" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80';">
+                <div class="thread-info">
+                    <div class="thread-seller">${escapeHTML(t.sellerName)}</div>
+                    <div class="thread-prod">📦 ${escapeHTML(t.productTitle)}</div>
+                    <div class="thread-preview">${lastMsg ? escapeHTML(lastMsg.text) : ''}</div>
+                </div>
+                <span title="ลบแชทนี้" onclick="deleteChatThread(event, '${t.threadId}')" style="color: #94a3b8; font-size: 1.1rem; padding: 4px;">&times;</span>
+            </div>
+        `;
+    }).join('');
 }
 
 function escapeHTML(str) {
@@ -755,7 +588,7 @@ function getTimeNow() {
     return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 }
 
-// ฟังก์ชันย่อขนาดรูปภาพอัตโนมัติ (ป้องกัน Error รูปใหญ่เกิน 4.5MB / 10MB)
+// ย่อขนาดรูปภาพอัตโนมัติป้องกันไฟล์ใหญ่เกินลิมิต Server/Vercel
 function compressImage(file, maxWidth = 800, quality = 0.75) {
     return new Promise((resolve) => {
         const reader = new FileReader();
@@ -823,9 +656,13 @@ async function login() {
     const data = await res.json();
 
     if (res.ok) {
-        currentUser = data;
+        const rawPrefix = email.split('@')[0];
+        const onlyNumbers = rawPrefix.replace(/\D/g, '');
+        const displayId = onlyNumbers || rawPrefix;
+
+        currentUser = { ...data, name: displayId };
         document.getElementById('myAvatar').src = data.avatar;
-        document.getElementById('myName').innerText = data.name;
+        document.getElementById('myName').innerText = displayId;
         document.getElementById('header-actions').style.display = 'flex';
         
         document.getElementById('login-section').style.display = 'none';
@@ -843,7 +680,6 @@ async function loadProducts() {
         const serverProducts = await res.json();
         const savedLocal = JSON.parse(localStorage.getItem('swu_custom_products') || '[]');
         
-        // รวมสินค้าที่เพิ่งเพิ่มในเครื่องเข้ากับสินค้าจาก Server (ไม่ให้ซ้ำกัน)
         const serverIds = new Set(serverProducts.map(p => p.id));
         const uniqueLocal = savedLocal.filter(p => !serverIds.has(p.id));
         
@@ -857,19 +693,12 @@ async function loadProducts() {
 function renderFilteredProducts() {
     const keyword = document.getElementById('searchInput').value.toLowerCase();
     const cat = document.getElementById('filterCategory').value;
-    const dorm = document.getElementById('filterDorm').value;
     const listDiv = document.getElementById('product-list');
 
     const filtered = allProducts.filter(item => {
         const matchKeyword = item.title.toLowerCase().includes(keyword) || (item.description || '').toLowerCase().includes(keyword);
         const matchCat = !cat || item.category === cat;
-        let matchDorm = true;
-        if (dorm === 'ประสานมิตร') {
-            matchDorm = item.dorm_location.includes('ประสานมิตร') || item.dorm_location.toLowerCase().includes('asoke');
-        } else if (dorm === 'องครักษ์') {
-            matchDorm = item.dorm_location.includes('องครักษ์');
-        }
-        return matchKeyword && matchCat && matchDorm;
+        return matchKeyword && matchCat;
     });
 
     listDiv.innerHTML = filtered.map(item => {
@@ -997,55 +826,6 @@ function selectPayOption(key, label) {
     }
 }
 
-function promptLinkBank() {
-    const bankName = prompt("ระบุชื่อธนาคารที่ต้องการผูก (เช่น ธนาคารไทยพาณิชย์, ธนาคารกรุงไทย):", "ธนาคารไทยพาณิชย์");
-    if (!bankName) return;
-    const last4 = prompt("ระบุเลขท้ายบัญชี 4 หลัก:", "4891") || "4891";
-    const key = "bank_custom_" + Date.now();
-    const label = `ตัดบัญชี ${bankName} *${last4}`;
-
-    const container = document.getElementById('linkedBankAccounts');
-    const div = document.createElement('div');
-    div.className = "pay-row pay-sub-row";
-    div.onclick = () => selectPayOption(key, label);
-    div.innerHTML = `
-        <div class="pay-row-left">
-            <div class="bank-circle" style="background: #4e2a84;">B</div>
-            <span class="pay-label-main">${escapeHTML(bankName)}</span>
-        </div>
-        <div class="pay-row-right">
-            <span style="color: #444;">*${escapeHTML(last4)}</span>
-            <div class="pay-radio" id="radio_${key}"></div>
-        </div>
-    `;
-    container.appendChild(div);
-    selectPayOption(key, label);
-}
-
-function promptAddCard() {
-    const last4 = prompt("ระบุเลขท้ายบัตรเครดิต/เดบิต 4 หลัก:", "8829");
-    if (!last4) return;
-    const key = "card_custom_" + Date.now();
-    const label = `บัตรเครดิต/เดบิต *${last4}`;
-
-    const container = document.getElementById('addedCardsList');
-    const div = document.createElement('div');
-    div.className = "pay-row pay-sub-row";
-    div.onclick = () => selectPayOption(key, label);
-    div.innerHTML = `
-        <div class="pay-row-left">
-            <span style="font-weight: 800; font-style: italic; color: #1e3a8a; font-size: 0.8rem;">VISA</span>
-            <span class="pay-label-main">บัตรเครดิต/เดบิต</span>
-        </div>
-        <div class="pay-row-right">
-            <span style="color: #444;">*${escapeHTML(last4)}</span>
-            <div class="pay-radio" id="radio_${key}"></div>
-        </div>
-    `;
-    container.appendChild(div);
-    selectPayOption(key, label);
-}
-
 function confirmPaymentSelection() {
     document.getElementById('selectedPaymentLabel').innerText = selectedPayLabel;
     const transferCard = document.getElementById('sellerTransferInfo');
@@ -1087,6 +867,28 @@ function confirmOrderAndChat() {
     });
 }
 
+// ========================================================
+// ตั้งค่าคำตอบอัตโนมัติตามคำถาม (โซน มศว ประสานมิตร)
+// ========================================================
+function getCustomReply(buyerText, product) {
+    const dorm = product?.dorm_location || "หน้า มศว ประสานมิตร";
+    const title = product?.title || "สินค้าชิ้นนี้";
+
+    if (buyerText.includes("ยังอยู่ไหม")) {
+        return `สวัสดีครับ/ค่ะ "${title}" ยังอยู่เลยครับ/ค่ะ สภาพดีพร้อมส่งต่อ สนใจรับไว้ไหมเอ่ย?`;
+    }
+
+    if (buyerText.includes("โอนเงิน")) {
+        return `ได้รับยอดโอนเรียบร้อยแล้วครับ/ค่ะ ขอบคุณมากเลย นัดรับที่ ${dorm} ช่วงเย็นได้เลยครับ/ค่ะ`;
+    }
+
+    if (buyerText.includes("นัดรับ")) {
+        return `สะดวกครับ/ค่ะ เจอกันที่ ${dorm} ช่วงหลัง 17.00 น. ได้เลยครับ/ค่ะ`;
+    }
+
+    return `รับทราบครับ/ค่ะ สอบถามเพิ่มเติมได้เลยนะ นัดรับได้ที่ ${dorm} ครับ/ค่ะ`;
+}
+
 async function startInWebChat() {
     if (!currentSelectedProduct || currentSelectedProduct.is_sold) return;
 
@@ -1105,7 +907,7 @@ async function startInWebChat() {
             messages: [
                 {
                     sender: 'seller',
-                    text: `สวัสดีครับ/ค่ะ สนใจ "${currentSelectedProduct.title}" สอบถามรายละเอียดหรือแจ้งชำระเงินได้เลยนะ`,
+                    text: `สวัสดีครับ/ค่ะ สนใจ "${currentSelectedProduct.title}" สอบถามรายละเอียดหรือนัดรับแถว มศว ประสานมิตร ได้เลยนะ`,
                     time: getTimeNow()
                 }
             ]
@@ -1231,12 +1033,9 @@ function submitChatMessage(event) {
 
     const thread = localChats[activeThreadId];
     const prod = allProducts.find(p => p.id === thread.productId);
-    const replies = (prod && prod.auto_replies) ? prod.auto_replies : [
-        "สวัสดีครับ/ค่ะ สินค้ายังอยู่ นัดรับที่หอพักหรือหน้า มศว ได้เลยนะ"
-    ];
 
     setTimeout(() => {
-        const replyText = replies[Math.floor(Math.random() * replies.length)];
+        const replyText = getCustomReply(text, prod);
         if (localChats[thread.threadId]) {
             localChats[thread.threadId].messages.push({
                 sender: 'seller',
@@ -1249,7 +1048,7 @@ function submitChatMessage(event) {
                 renderChatMessages();
             }
         }
-    }, 1000);
+    }, 800);
 }
 
 function updateChatBadge() {
@@ -1281,13 +1080,13 @@ async function addProduct() {
         title, 
         price: Number(price), 
         category,
-        dorm_location: dorm_location || "ไม่ระบุ", 
+        dorm_location: dorm_location || "มศว ประสานมิตร", 
         payment_method,
         payment_detail: payment_detail || "พร้อมเพย์ 081-234-5678",
         payment_qr: uploadedQrBase64,
         description: description || "ไม่มีรายละเอียดเพิ่มเติม",
         image_url: uploadedBase64Image || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80",
-        seller_name: currentUser ? currentUser.name : "Thanyalak Kanthadong",
+        seller_name: currentUser ? currentUser.name : "นิสิต มศว ประสานมิตร",
         seller_avatar: currentUser ? currentUser.avatar : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80"
     };
 
@@ -1303,13 +1102,9 @@ async function addProduct() {
             const data = await res.json();
             createdProduct = data.product;
         } else {
-            // กรณี Server ตอบ Error จะแจ้งเตือนสาเหตุให้เห็นทันที
-            const errText = await res.text();
-            alert(`ไม่สามารถบันทึกขึ้น Server ได้ (${res.status}): ${errText}\nแต่ระบบจะบันทึกแสดงผลในหน้านี้ให้ชั่วคราวครับ`);
             createdProduct = { id: Date.now(), ...payload, is_sold: false };
         }
 
-        // เก็บลง localStorage เพื่อให้สินค้าแสดงค้างไว้แม้รันบน Vercel
         const savedLocal = JSON.parse(localStorage.getItem('swu_custom_products') || '[]');
         savedLocal.unshift(createdProduct);
         localStorage.setItem('swu_custom_products', JSON.stringify(savedLocal));
